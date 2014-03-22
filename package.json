@@ -6,12 +6,20 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mhkeller/valrada-server"
+  },
   "author": "Michael Keller",
   "license": "MIT",
   "dependencies": {
     "hookshot": "0.0.2",
     "execSync": "^1.0.1-pre"
   },
+  "bugs": {
+    "url": "https://github.com/mhkeller/valrada-server/issues"
+  },
+  "homepage": "https://github.com/mhkeller/valrada-server",
   "scripts": {
     "preinstall": "bash scripts/preinstall.sh"
   }
