@@ -1,0 +1,18 @@
+{
+  "name": "valdrada-server",
+  "version": "0.0.1",
+  "description": "A hook to listen to GitHub and put to S3.",
+  "main": "src/valrada-listener.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Michael Keller",
+  "license": "MIT",
+  "dependencies": {
+    "hookshot": "0.0.2",
+    "execSync": "^1.0.1-pre"
+  },
+  "scripts": {
+    "preinstall": "bash scripts/preinstall.sh"
+  }
+}
