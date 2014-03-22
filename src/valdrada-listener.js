@@ -3,7 +3,6 @@ var hookshot = require('hookshot'),
 	sh   = require('execSync');
 
 var config = require('./config.json');
-var port_number = 9001;
 
 function verifyAccount(incoming_repo){
 	if (incoming_repo == config.github_account) return true;
@@ -46,6 +45,6 @@ hookshot('refs/heads/master', function(info){
 			deployToS3(info);
 		}
 	}
-}).listen(port_number);
-console.log('Listening on port... ' + port_number);	
+}).listen(config.port);
+console.log('Listening on port... ' + config.port);	
 
