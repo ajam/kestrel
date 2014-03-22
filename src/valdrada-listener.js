@@ -2,7 +2,7 @@ var hookshot = require('hookshot'),
 	fs   = require('fs'),
 	sh   = require('execSync');
 
-var config = require('./config.json');
+var config = require('../config.json');
 
 function verifyAccount(incoming_repo){
 	if (incoming_repo == config.github_account) return true;
