@@ -10,12 +10,12 @@ function verifyAccount(incoming_repo){
 }
 function determineArchiveRemoteUrl(domain){
 	domain = domain.toLowerCase().trim();
+	
 	var tld = {
 		"bitbucket": ".org",
 		"github": ".com"
 	}
 	return domain + tld[domain]
-
 }
 function createDirGitInit(info){
 	var repo_name = info.repository.name;
@@ -28,6 +28,7 @@ function createDirGitInit(info){
 }
 function pullLatest(info){
 	var repo_name = info.repository.name;
+
 	if (!fs.existsSync('./' + repo_name)){
 		createDirGitInit(info);
 	}
@@ -40,6 +41,7 @@ function checkForDeployMsg(commits){
 	// The last commit in the array is the most recent
 	var commit_msg = commits[commits.length - 1].message,
 	    deploy_regx = new RegExp(config.deploy_trigger);
+
 	if (deploy_regx.exec(commit_msg)) return true;
 	return false;
 }
@@ -50,6 +52,7 @@ function deployToS3(info){
 	var deploy_result = sh.exec('aws s3 sync '+repo_name+' s3://'+config.bucket_name+'/'+path+repo_name+'/ --exclude ".git/*" --exclude ".*"');
 	console.log(deploy_result.stdout);
 }
+
 hookshot('refs/heads/master', function(info){
 	var is_account_verified = verifyAccount(info.repository.owner.name),
 	    deploy_msg_found    = checkForDeployMsg(info.commits);
@@ -63,5 +66,5 @@ hookshot('refs/heads/master', function(info){
 
 	}
 }).listen(config.port);
-console.log('Listening on port... ' + config.port);	
 
+console.log('Listening on port... ' + config.port);	
