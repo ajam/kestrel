@@ -31,7 +31,6 @@ function deployToS3(info){
 	var repo_name = info.repository.name,
 	    path      = (config.path) ? config.path + '/' : '';
 
-	if (config.use_year_in_path) { path += new Date().getFullYear() + '/' };
 
 	var deploy_result = sh.exec('aws s3 sync '+repo_name+' s3://'+config.bucket_name+'/'+path+repo_name+'/ --exclude ".git/*" --exclude ".*"');
 	console.log(deploy_result.stdout);
