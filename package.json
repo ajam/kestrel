@@ -1,14 +1,14 @@
 {
-  "name": "valdrada-server",
+  "name": "valdrada-listener",
   "version": "0.0.1",
   "description": "A hook to listen to GitHub and put to S3.",
-  "main": "src/valrada-listener.js",
+  "main": "src/valdrada-listener.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/mhkeller/valrada-server"
+    "url": "https://github.com/mhkeller/valdrada-listener"
   },
   "author": "Michael Keller",
   "license": "MIT",
@@ -17,10 +17,7 @@
     "execSync": "^1.0.1-pre"
   },
   "bugs": {
-    "url": "https://github.com/mhkeller/valrada-server/issues"
+    "url": "https://github.com/mhkeller/valdrada-listener/issues"
   },
-  "homepage": "https://github.com/mhkeller/valrada-server",
-  "scripts": {
-    "preinstall": "bash scripts/preinstall.sh"
-  }
+  "homepage": "https://github.com/mhkeller/valdrada-listener"
 }
