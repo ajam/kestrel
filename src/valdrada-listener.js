@@ -1,12 +1,33 @@
 var hookshot = require('hookshot'),
-	fs   = require('fs'),
-	sh   = require('execSync');
+	fs         = require('fs'),
+	sh         = require('execSync'),
+	request    = require('request');
 
-var config = require('../config.json');
+var config  = require('../config.json'),
+		gh_cred = require('../.auth/github.json');
 
 function verifyAccount(incoming_repo){
 	if (incoming_repo == config.github_account) return true;
 	return false;
+}
+function checkIfCommitterIsDeployer(members, committer){
+	members.some(function(member){
+		return member.name === committer;
+	})
+}
+function verifyCommitter(last_commit, cb){
+	// You only need to verify the deployer if you're using teams, otherwise disable it and always allow anyone pushing to that repo to deploy.
+	if (!gh_cred.enabled){
+		cb(true);
+	}else{
+		var committer = last_commit.committer.username;
+		request('https://api.github.com/teams/' + gh_cred.team + '/members?access_token=' + gh_cred.access_token, function (error, response, body) {
+		  if (!error && response.statusCode == 200) {
+		  	var committer_is_deployer = checkIfCommitterIsDeployer(JSON.parse(body), committer);
+		    cb(committer_is_deployer);
+		  }
+		})
+	}
 }
 function determineArchiveRemoteUrl(domain){
 	domain = domain.toLowerCase().trim();
@@ -37,9 +58,8 @@ function pullLatest(info){
 	if (config.archive.enabled) pull_statement += ' && git push origin archived';
 	sh.run(pull_statement);
 }
-function checkForDeployMsg(commits){
-	// The last commit in the array is the most recent
-	var commit_msg = commits[commits.length - 1].message,
+function checkForDeployMsg(last_commit){
+	var commit_msg = last_commit.message,
 	    deploy_regx = new RegExp(config.deploy_trigger);
 
 	if (deploy_regx.exec(commit_msg)) return true;
@@ -54,14 +74,21 @@ function deployToS3(info){
 }
 
 hookshot('refs/heads/master', function(info){
+	// The last commit in the array is the most recent
+	var most_recent_commit  = info.commits[info.commits.length - 1];
+
 	var is_account_verified = verifyAccount(info.repository.owner.name),
-	    deploy_msg_found    = checkForDeployMsg(info.commits);
+	    deploy_msg_found    = checkForDeployMsg(most_recent_commit);
 
 	if (is_account_verified){
 		pullLatest(info);
 
 		if (deploy_msg_found){
-			deployToS3(info);
+			verifyCommitter(most_recent_commit, function(committer_approved){
+
+				if (committer_approved) deployToS3(info);
+			
+			});
 		}
 
 	}

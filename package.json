@@ -14,7 +14,8 @@
   "license": "MIT",
   "dependencies": {
     "hookshot": "0.0.2",
-    "execSync": "^1.0.1-pre"
+    "execSync": "^1.0.1-pre",
+    "request": "~2.34.0"
   },
   "bugs": {
     "url": "https://github.com/mhkeller/valdrada-listener/issues"
