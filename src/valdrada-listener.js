@@ -3,8 +3,7 @@ var hookshot = require('hookshot'),
 	sh         = require('execSync'),
 	request    = require('request');
 
-var config  = require('../config.json'),
-		gh_cred = require('../.auth/github.json');
+var config  = require('../config.json');
 
 function verifyAccount(incoming_repo){
 	if (incoming_repo == config.github_account) return true;
@@ -17,11 +16,11 @@ function checkIfCommitterIsDeployer(members, committer){
 }
 function verifyCommitter(last_commit, cb){
 	// You only need to verify the deployer if you're using teams, otherwise disable it and always allow anyone pushing to that repo to deploy.
-	if (!gh_cred.enabled){
+	if (!config.verify_committer.enabled){
 		cb(true);
 	}else{
 		var committer = last_commit.committer.username;
-		request('https://api.github.com/teams/' + gh_cred.team + '/members?access_token=' + gh_cred.access_token, function (error, response, body) {
+		request('https://api.github.com/teams/' + config.verify_committer.team_id + '/members?access_token=' + config.verify_committer.access_token, function (error, response, body) {
 		  if (!error && response.statusCode == 200) {
 		  	var committer_is_deployer = checkIfCommitterIsDeployer(JSON.parse(body), committer);
 		    cb(committer_is_deployer);
