@@ -1,0 +1,17 @@
+{
+	"github_account": "your-github-account-name",
+	"bucket_name": "s3-bucket-name",
+	"deploy_trigger": "string-to-trigger-a-deployment-to-s3",
+	"path": "2014",
+	"port": 9001,
+	"archive": {
+		"enabled": false,
+		"account_name": "your-github-or-bitbucket-account-name",
+		"type": "choose-bitbucket-or-github"
+	},
+	"verify_committer":  {
+		"enabled": false,
+		"team_id": 000001,
+		"access_token": "your-access-token"
+	}
+}
