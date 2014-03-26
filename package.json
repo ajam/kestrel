@@ -15,7 +15,8 @@
   "dependencies": {
     "hookshot": "0.0.2",
     "execSync": "^1.0.1-pre",
-    "request": "~2.34.0"
+    "request": "~2.34.0",
+    "git-static-diffuse": "0.0.3"
   },
   "bugs": {
     "url": "https://github.com/mhkeller/professor-blastoff-server/issues"
