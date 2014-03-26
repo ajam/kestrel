@@ -1,14 +1,14 @@
 {
-  "name": "valdrada-listener",
+  "name": "professor-blastoff-server",
   "version": "0.0.1",
-  "description": "A hook to listen to GitHub and put to S3.",
-  "main": "src/valdrada-listener.js",
+  "description": "A hook to listen to GitHub and blast off to S3.",
+  "main": "src/professor-blastoff-server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/mhkeller/valdrada-listener"
+    "url": "https://github.com/mhkeller/professor-blastoff-server"
   },
   "author": "Michael Keller",
   "license": "MIT",
@@ -18,7 +18,7 @@
     "request": "~2.34.0"
   },
   "bugs": {
-    "url": "https://github.com/mhkeller/valdrada-listener/issues"
+    "url": "https://github.com/mhkeller/professor-blastoff-server/issues"
   },
-  "homepage": "https://github.com/mhkeller/valdrada-listener"
+  "homepage": "https://github.com/mhkeller/professor-blastoff-server"
 }
