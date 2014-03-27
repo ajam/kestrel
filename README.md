@@ -42,16 +42,17 @@ All settings are stored in `config.json`.
 
 | Key          | Default value     | Description |
 | ------------- |:----------------:|:---------:|
-| `github_account` | none   | The name of your GitHub account to account. This is used to make sure your server only responds to hooks from your account. |
-| `bucket_name` | none | The name of your S3 bucket to deploy to. |
-| `deploy_trigger` | none | The string in your commit message that will trigger an upload to S3. |
-| `path` | `"2014"` | The S3 path to put your repo. |
-| `port` | `9001` | The port your server will listen on. Make sure to open up traffic to this port in your security group. |
+| `github_listener.account_name` | none   | The name of your GitHub account to account. This is used to make sure your server only responds to hooks from your account. |
+| `github_listener.port` | `9001` | The port your server will listen on. Make sure to open up traffic to this port in your security group. |
+| `s3.bucket_name` | none | The name of your S3 bucket to deploy to. |
+| `s3.path` | `"2014/"` | The S3 path to put your repo. Must end with slash. |
+| `s3.deploy_trigger` | none | The string in your commit message that will trigger an upload to S3. |
+| `s3.exclude_from_sync` | `[".git/*", ".*"]` | An array of file or folder names to not transfer to S3. By default it doesn't transfer the Git folder or any hidden files. |
 | `archive.enabled` | false | If you enable archives, the server will automatically push your repo to another GitHub or Bitbucket account. Set this to `true` to enable. |
 | `archive.account_name` | none | The account name to archive this repo under. |
 | `archive.type` | none | Can be either `bitbucket` or `github`. |
 | `verify_committer.enabled` | false | If you enable committer verifiation, the server will only allow committers who are members of a designated GitHub team to push to S3, even if they use the deploy trigger in their commit message. This only works for organizations since it requires teams. |
-| `verify_committer.team_id` | 000001 | The numeric `team_id`. |
+| `verify_committer.team_id` | "000001" | The `team_id` as a string. |
 | `verify_committer.access_token` | none | Generate an access token from an administrator's account at <https://github.com/settings/applications> in order to see the member list of your deployment team. This user **must** also be a member of the deployment team. |
 
 ### AWS Configuration
@@ -123,7 +124,7 @@ http://your-professor-blastoff-server.com:3000/repository-name/commit-or-branch-
 To test the server, run:
 
 ````
-node full/path/to/professor-blastoff-server/node_modules/git-static-diffuse/examples/server.js --repositories full/path/to/professor-blastoff-server
+node full/path/to/professor-blastoff-server/node_modules/git-static-diffuse/examples/server.js --repositories full/path/to/professor-blastoff-server/repositories
 ````
 
 You can specify a port other than 3000 by using `--port <replace-with-port-number>` as an option.
@@ -131,7 +132,7 @@ You can specify a port other than 3000 by using `--port <replace-with-port-numbe
 On Ubunutu, for instance, assuming you've installed Professor Blastoff in a folder called `tasks`, those paths and an alternate port setting could be:
 
 ````
-node /home/ubuntu/tasks/professor-blastoff-server/node_modules/git-static-diffuse/examples/server.js --repositories /home/ubuntu/tasks/professor-blastoff-server --port 3001
+node /home/ubuntu/tasks/professor-blastoff-server/node_modules/git-static-diffuse/examples/server.js --repositories /home/ubuntu/tasks/professor-blastoff-server/repositories --port 3001
 ````
 
 # Start the staging server as a service
@@ -141,11 +142,11 @@ Follow the same instructions as above for using Forever and also add the `@reboo
 Starting Forever: 
 
 ````
-/usr/bin/forever start /home/ubuntu/tasks/professor-blastoff-server/node_modules/git-static-diffuse/examples/server.js --repositories /home/ubuntu/tasks/professor-blastoff-server
+/usr/bin/forever start /home/ubuntu/tasks/professor-blastoff-server/node_modules/git-static-diffuse/examples/server.js --repositories /home/ubuntu/tasks/professor-blastoff-server/repositories
 ````
 
 And in your crontab:
 
 ````
-@reboot /usr/bin/forever start /home/ubuntu/tasks/professor-blastoff-server/node_modules/git-static-diffuse/examples/server.js --repositories /home/ubuntu/tasks/professor-blastoff-server
+@reboot /usr/bin/forever start /home/ubuntu/tasks/professor-blastoff-server/node_modules/git-static-diffuse/examples/server.js --repositories /home/ubuntu/tasks/professor-blastoff-server/repositories
 ````

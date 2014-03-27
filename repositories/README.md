@@ -1,0 +1,1 @@
+This folder will be the default location to save and host your repositories.
