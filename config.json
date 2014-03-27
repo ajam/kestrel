@@ -4,9 +4,11 @@
 		"port": 9001
 	},
 	"s3": {
+		"enabled": false,
 		"bucket_name": "s3-bucket-name",
 		"path": "2014/",
-		"deploy_trigger": "string-to-trigger-a-deployment-to-s3",
+		"sync_deploy_trigger": "string-to-trigger-a-sync-to-s3",
+		"hard_deploy_trigger": "string-to-trigger-an-overwrite-of-files-on-s3",
 		"exclude_from_sync": [".git/*", ".*"]
 	},
 	"archive": {
