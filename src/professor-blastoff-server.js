@@ -62,16 +62,18 @@ function pullLatest(info){
 }
 function checkForDeployMsg(last_commit){
 	var commit_msg = last_commit.message,
-	    deploy_regx = new RegExp(config.s3.deploy_trigger);
+	    cp_deploy_regx   = new RegExp(config.s3.hard_deploy_trigger),
+	    sync_deploy_regx = new RegExp(config.s3.sync_deploy_trigger);
 
-	if (deploy_regx.exec(commit_msg)) return true;
+	if (cp_deploy_regx.exec(commit_msg)) return 'cp';
+	if (sync_deploy_regx.exec(commit_msg)) return 'sync';
 	return false;
 }
-function deployToS3(info){
+function deployToS3(deploy_type, info){
 	var repo_name = info.repository.name,
 	    path      = (config.s3.path) ? config.s3.path : '';
 
-	var deploy_statement = setDeploy(repo_name, config.s3.bucket_name, path, config.s3.exclude_from_sync);
+	var deploy_statement = sh_commands.deploy(deploy_type, repo_name, config.s3.bucket_name, path, config.s3.exclude_from_sync);
 	var deploy_result = sh.exec(deploy_statement);
 	// var deploy_result = sh.exec('aws s3 sync '+repo_name+' s3://'+config.bucket_name+'/'+path+repo_name+'/ --exclude ".git/*" --exclude ".*"');
 	console.log(deploy_result.stdout);
@@ -82,15 +84,18 @@ hookshot('refs/heads/master', function(info){
 	var most_recent_commit  = info.commits[info.commits.length - 1];
 
 	var is_account_verified = verifyAccount(info.repository.owner.name),
-	    deploy_msg_found    = checkForDeployMsg(most_recent_commit);
+	    deploy_status       = checkForDeployMsg(most_recent_commit);
 
+	// Is this coming from the whitelisted GitHub account?
 	if (is_account_verified){
 		pullLatest(info);
 
-		if (deploy_msg_found){
+		// Are we deploying?
+		if (config.s3.enabled && deploy_status){
 			verifyCommitter(most_recent_commit, function(committer_approved){
 
-				if (committer_approved) deployToS3(info);
+				// Does the committer have deploy? privileges?
+				if (committer_approved) deployToS3(deploy_status, info);
 			
 			});
 		}

@@ -26,8 +26,8 @@ var sh_commands = {
 	pushToArchive: function(){
 		return ' && git push origin archived';
 	},
-	setDeploy: function(repo_name, bucket_name, path, exclusions){
-		return 'aws s3 sync '+repo_name+' s3://'+bucket_name+'/'+path+repo_name+'/ ' + helpers.excludeFiles(exclusions)
+	deploy: function(mode, repo_name, bucket_name, path, exclusions){
+		return 'aws s3 ' + mode + ' '+repo_name+' s3://'+bucket_name+'/'+path+repo_name+'/ --acl public-read ' + ((mode == 'cp') ? '--recursive' : '') + ' ' + helpers.excludeFiles(exclusions)
 	}
 }
 
