@@ -56,7 +56,7 @@ All settings are stored in `config.json`.
 | `archive.account_name` | none | The account name to archive this repo under. |
 | `archive.type` | none | Can be either `bitbucket` or `github`. |
 | `verify_committer.enabled` | `false` | If you enable committer verifiation, the server will only allow committers who are members of a designated GitHub team to push to S3, even if they use the deploy trigger in their commit message. This only works for organizations since it requires teams. |
-| `verify_committer.team_id` | "000001" | The `team_id` as a string. |
+| `verify_committer.team_id` | `"000001"` | The `team_id` as a string. |
 | `verify_committer.access_token` | none | Generate an access token from an administrator's account at <https://github.com/settings/applications> in order to see the member list of your deployment team. This user **must** also be a member of the deployment team. |
 
 ### AWS Configuration
