@@ -114,7 +114,7 @@ Note: The above line assumes that Forever is installed in `/usr/bin/`. To double
 
 # Start the staging server
 
-Professor Blastoff uses [git-static-diffuse](https://github.com/mhkeller/git-static-diffuse) to allow you to view your all of the commits and branches of your repositories through a web server with the following url structure:
+Professor Blastoff uses [git-static-diffuse](https://github.com/mhkeller/git-static-diffuse) to allow you to view your all of the commits and branches of your repositories through a web server with the following url structure (defaulting to port 3000):
 
 ````
 http://your-professor-blastoff-server.com:3000/repository-name/commit-or-branch-name/path/to/file.html
@@ -126,10 +126,12 @@ To test the server, run:
 node full/path/to/professor-blastoff-server/node_modules/git-static-diffuse/examples/server.js --repositories full/path/to/professor-blastoff-server
 ````
 
-On my Ubunutu, for instance, assuming you've installed Professor Blastoff in a folder called `tasks`, those paths are:
+You can specify a port other than 3000 by using `--port <replace-with-port-number>` as an option.
+
+On Ubunutu, for instance, assuming you've installed Professor Blastoff in a folder called `tasks`, those paths and an alternate port setting could be:
 
 ````
-node /home/ubuntu/tasks/professor-blastoff-server/node_modules/git-static-diffuse/examples/server.js --repositories /home/ubuntu/tasks/professor-blastoff-server
+node /home/ubuntu/tasks/professor-blastoff-server/node_modules/git-static-diffuse/examples/server.js --repositories /home/ubuntu/tasks/professor-blastoff-server --port 3001
 ````
 
 # Start the staging server as a service
