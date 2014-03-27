@@ -9,7 +9,7 @@ var helpers = {
 	},
 	excludeFiles: function(exclusions){
 		return exclusions.map(function(exclusion){
-			return '--exclude "' + exclusion + '"' ;
+			return '--exclude "' + exclusion + '"';
 		}).join(' ');
 	}
 }
