@@ -3,7 +3,7 @@ var hookshot = require('hookshot'),
 	sh         = require('execSync'),
 	request    = require('request');
 
-var config  = require('../config.json'),
+var config      = require('../config.json'),
 		sh_commands = require('./sh-commands.js')
 
 function verifyAccount(incoming_repo){
