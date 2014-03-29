@@ -40,7 +40,7 @@ sudo apt-get install git-core
 
 ### Server configuration
 
-All settings are stored in `config.json`.
+All settings are stored in `config.sample.json`. Enter your own values and rename it to `config.json`.
 
 | Key          | Default value     | Description |
 | ------------- |:----------------:|:---------:|
