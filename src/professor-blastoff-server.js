@@ -40,7 +40,7 @@ function createDirGitInit(info){
 function pullLatest(info){
 	var repo_name = info.repository.name;
 
-	if (!fs.existsSync('./' + repo_name)){
+	if (!fs.existsSync('./repositories' + repo_name)){
 		createDirGitInit(info);
 	}
 
