@@ -29,23 +29,12 @@ function verifyCommitter(last_commit, cb){
 		})
 	}
 }
-// function determineArchiveRemoteUrl(domain){
-// 	domain = domain.toLowerCase().trim();
-	
-// 	var tld = {
-// 		"bitbucket": ".org",
-// 		"github": ".com"
-// 	}
-// 	return domain + tld[domain]
-// }
+
 function createDirGitInit(info){
 	var repo_name = info.repository.name;
 	fs.mkdirSync('./' + repo_name);
 
 	var create_statement = sh_commands.createGitRepoAndRemotes(repo_name, info.repository.url, config.archive);
-	// var create_statement = 'cd repositories/' + repo_name + ' && git init && git remote add origin ' + info.repository.url + '.git';
-	// if (config.archive.enabled) create_statement += ' && git remote add archived https://' + determineArchiveRemoteUrl(config.archive.type) + '/' + config.archive.account_name + '/' + repo_name + '.git';
-  
   sh.run(create_statement);
 }
 function pullLatest(info){
@@ -56,8 +45,6 @@ function pullLatest(info){
 	}
 
 	var fetch_statement = sh_commands.fetchLatest(repo_name, config.archive);
-	// var pull_statement = 'cd repositories/' + repo_name + ' &&  git fetch origin && git checkout origin/master';
-	// if (config.archive.enabled) pull_statement += ' && git push origin archived';
 	sh.run(fetch_statement);
 }
 function checkForDeployMsg(last_commit){
