@@ -11,7 +11,7 @@
 		"exclude_from_sync": [".git/*", ".*"],
 		"hard_deploy_trigger": {
 			"enabled": false,
-			"trigger": "string-to-trigger-an-overwrite-of-files-on-s3",
+			"trigger": "string-to-trigger-an-overwrite-of-files-on-s3"
 		}
 	},
 	"archive": {
