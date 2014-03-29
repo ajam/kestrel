@@ -32,7 +32,7 @@ function verifyCommitter(last_commit, cb){
 
 function createDirGitInit(info){
 	var repo_name = info.repository.name;
-	fs.mkdirSync('./' + repo_name);
+	fs.mkdirSync('./repositories/' + repo_name);
 
 	var create_statement = sh_commands.createGitRepoAndRemotes(repo_name, info.repository.url, config.archive);
   sh.run(create_statement);
