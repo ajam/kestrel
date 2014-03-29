@@ -65,7 +65,7 @@ function checkForDeployMsg(last_commit){
 	    cp_deploy_regx   = new RegExp(config.s3.hard_deploy_trigger),
 	    sync_deploy_regx = new RegExp(config.s3.sync_deploy_trigger);
 
-	if (cp_deploy_regx.exec(commit_msg)) return 'cp';
+	if (config.hard_deploy_trigger.enabled && cp_deploy_regx.exec(commit_msg)) return 'cp';
 	if (sync_deploy_regx.exec(commit_msg)) return 'sync';
 	return false;
 }
@@ -90,7 +90,7 @@ hookshot('refs/heads/master', function(info){
 	if (is_account_verified){
 		pullLatest(info);
 
-		// Are we deploying?
+		// Are we deploying? Has that option been enabled and does the commit have the appropriate message?
 		if (config.s3.enabled && deploy_status){
 			verifyCommitter(most_recent_commit, function(committer_approved){
 
