@@ -49,10 +49,10 @@ function pullLatest(info){
 }
 function checkForDeployMsg(last_commit){
 	var commit_msg = last_commit.message,
-	    cp_deploy_regx   = new RegExp(config.s3.hard_deploy_trigger),
+	    cp_deploy_regx   = new RegExp(config.s3.hard_deploy.trigger),
 	    sync_deploy_regx = new RegExp(config.s3.sync_deploy_trigger);
 
-	if (config.s3.hard_deploy_trigger.enabled && cp_deploy_regx.exec(commit_msg)) return 'cp';
+	if (config.s3.hard_deploy.enabled && cp_deploy_regx.exec(commit_msg)) return 'cp';
 	if (sync_deploy_regx.exec(commit_msg)) return 'sync';
 	return false;
 }
@@ -62,7 +62,7 @@ function deployToS3(deploy_type, info){
 
 	var deploy_statement = sh_commands.deploy(deploy_type, repo_name, config.s3.bucket_name, path, config.s3.exclude_from_sync);
 	var deploy_result = sh.exec(deploy_statement);
-	// var deploy_result = sh.exec('aws s3 sync '+repo_name+' s3://'+config.bucket_name+'/'+path+repo_name+'/ --exclude ".git/*" --exclude ".*"');
+	// Log deployment result
 	console.log(deploy_result.stdout);
 }
 

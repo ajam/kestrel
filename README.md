@@ -50,7 +50,8 @@ All settings are stored in `config.sample.json`. Enter your own values and renam
 | `s3.bucket_name` | none | The name of your S3 bucket to deploy to. |
 | `s3.path` | `"2014/"` | The S3 path to put your repo. Must end with slash. |
 | `s3.sync_deploy_trigger` | none | The string in your commit message that will trigger a sync to S3. |
-| `s3.hard_deploy_trigger` | none | The string in your commit message that will copy all files in your repo onto S3, not just the modified files and overwrite existing files. The `hard_deploy_trigger` regex will run first so if you're hard deploy trigger is `deploy-hard` and your sync trigger is `deploy`, it will properly deploy hard. But it's probably best to make these two completely distinct strings to avoid confusion.|
+| `s3.hard_deploy.enabled` | `false` | Enable the option that a string in your commit message will copy all files in your repo onto S3, not just the modified files and overwrite existing files. The `hard_deploy.trigger` regex will run first so if your hard deploy trigger is `deploy-hard` and your sync trigger is `deploy`, it will properly deploy hard. But it's probably best to make these two completely distinct strings to avoid confusion.|
+| `s3.hard_deploy.trigger` | none | The string to trigger a hard deploy.|
 | `s3.exclude_from_sync` | `[".git/*", ".*"]` | An array of file or folder names to not transfer to S3. By default it doesn't transfer the Git folder or any hidden files. |
 | `archive.enabled` | `false` | If you enable archives, the server will automatically push your repo to another GitHub or Bitbucket account. Set this to `true` to enable. |
 | `archive.account_name` | none | The account name to archive this repo under. |
@@ -74,7 +75,7 @@ aws_secret_access_key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 # Start Professor Blastoff Server
 
 ````
-node src/index.js
+node src/server.js
 ````
 
 This will only run the listening server for your current session only. That's only recommended for testing. By default, the server runs on port 9001.
@@ -92,7 +93,7 @@ npm install forever -g
 Then start the service:
 
 ````
-forever start index.js
+forever start src/server.js
 ````
 
 You'll also want to make sure this server starts up if your machine reboots. You can do this through setting your crontab. To edit your crontab run:
@@ -106,7 +107,7 @@ Note: If this is the first time you're running `crontab` it will ask you what ed
 Once you've picked an editor, add the following line to your crontab:
 
 ````
-@reboot /usr/bin/forever start /full/path/to/index.js
+@reboot /usr/bin/forever start /full/path/to/server.js
 ````
 
 To confirm the task was added, view your crontab with:
