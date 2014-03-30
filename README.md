@@ -5,7 +5,7 @@ Notice: This is still a work in progress. I'll remove this notice when it's fair
 
 A git server that mirrors repositories on a GitHub account at every commit and pushes that repository to a given S3 bucket if the commit message contains a specified trigger string. Tested on Ubuntu 12.04.
 
-The Prof. Blastoff server requires that you've already set up a webhook from your Github repositry to your machines IP address on the proper port (see below for default port info). It's meant to be used in conjunction with the command-line tool [Professor Blastoff](https://github.com/mhkeller/professor-blastoff), which sets up a lot of that automatically for you.
+The Professor Blastoff server requires that you've already set up a webhook from your Github repositry to your machines IP address on the proper port (see below for default port info). It's meant to be used in conjunction with the command-line tool [Professor Blastoff](https://github.com/mhkeller/professor-blastoff), which sets up a lot of that automatically for you.
 
 # Installation
 
@@ -74,7 +74,7 @@ aws_secret_access_key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 # Start Professor Blastoff Server
 
 ````
-node src/professor-blastoff-server
+node src/index.js
 ````
 
 This will only run the listening server for your current session only. That's only recommended for testing. By default, the server runs on port 9001.
@@ -92,7 +92,7 @@ npm install forever -g
 Then start the service:
 
 ````
-forever start professor-blastoff-server.js
+forever start index.js
 ````
 
 You'll also want to make sure this server starts up if your machine reboots. You can do this through setting your crontab. To edit your crontab run:
@@ -106,7 +106,7 @@ Note: If this is the first time you're running `crontab` it will ask you what ed
 Once you've picked an editor, add the following line to your crontab:
 
 ````
-@reboot /usr/bin/forever start /full/path/to/professor-blastoff-server.js
+@reboot /usr/bin/forever start /full/path/to/index.js
 ````
 
 To confirm the task was added, view your crontab with:
