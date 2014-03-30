@@ -2,7 +2,7 @@
   "name": "professor-blastoff-server",
   "version": "0.0.1",
   "description": "A hook to listen to GitHub and blast off to S3.",
-  "main": "src/professor-blastoff-server.js",
+  "main": "src/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
