@@ -103,7 +103,7 @@ aws_access_key_id=AKIAIOSFODNN7EXAMPLE
 aws_secret_access_key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 ````
 
-# Start Snowy Owl Server
+# Start the server
 
 ````
 node src/server.js
@@ -111,7 +111,7 @@ node src/server.js
 
 This will only run the listening server for your current session only. That's only recommended for testing. By default, the server runs on port 9001.
 
-# Run Snowy Owl as a service
+# Run it as a service
 
 If you want to run Snowy Owl all day long, use the Forever module to run the server in the background.
 
