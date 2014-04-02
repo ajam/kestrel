@@ -5,6 +5,12 @@ Notice: This is still a work in progress. I'll remove this notice when it's fair
 
 A git server that mirrors repositories on a GitHub account at every commit and pushes that repository to a given S3 bucket if the commit message contains a specified trigger string. Tested on Ubuntu 12.04.
 
+#### Read the [full setup instructions on the wiki](http://github.com/mhkeller/snowy-owl/wiki) for detailed steps on how to configure the server, clients and the required GitHub settings.
+
+*The instructions below only cover the server.*
+
+===========
+
 The Snowy Owl server requires that you've already set up a webhook from your Github repositry to your machines IP address on the proper port (see below for default port info). It's meant to be used in conjunction with the [command-line tool Snowy Owl](https://github.com/mhkeller/snowy-owl-cli), which sets up a lot of that automatically for you.
 
 # Installation
