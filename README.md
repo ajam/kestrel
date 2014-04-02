@@ -42,6 +42,37 @@ sudo apt-get install git-core
 
 All settings are stored in `config.sample.json`. Enter your own values and rename it to `config.json`.
 
+````
+{
+	"github_listener": {
+		"account_name": "Your GitHub account name",
+		"port": 9001
+	},
+	"s3": {
+		"enabled": false,
+		"bucket_name": "Your S3 bucket name",
+		"path": "2014/",
+		"sync_deploy_trigger": "String to trigger a sync to s3",
+		"exclude_from_sync": [".git/*", ".*"],
+		"hard_deploy": {
+			"enabled": false,
+			"trigger": "String to trigger an overwrite of S3 files"
+		}
+	},
+	"archive": {
+		"enabled": false,
+		"account_name": "Your GitHub or bitbucket account name",
+		"type": "Choose either bitbucket or github"
+	},
+	"verify_committer": {
+		"enabled": false,
+		"team_id": "000001",
+		"access_token": "Your access token"
+	}
+}
+
+````
+
 | Key          | Default value     | Description |
 | ------------- |:----------------:|:---------:|
 | `github_listener.account_name` | none   | The name of your GitHub account to account. This is used to make sure your server only responds to hooks from your account. |
