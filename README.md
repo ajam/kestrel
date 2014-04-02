@@ -1,19 +1,19 @@
-Strangelove
+Snowy Owl
 ============
 
 Notice: This is still a work in progress. I'll remove this notice when it's fairly stable. Or, follow the version number.
 
 A git server that mirrors repositories on a GitHub account at every commit and pushes that repository to a given S3 bucket if the commit message contains a specified trigger string. Tested on Ubuntu 12.04.
 
-The Strangelove server requires that you've already set up a webhook from your Github repositry to your machines IP address on the proper port (see below for default port info). It's meant to be used in conjunction with the command-line tool [Strangelove](https://github.com/mhkeller/strangelove), which sets up a lot of that automatically for you.
+The Snowy Owl server requires that you've already set up a webhook from your Github repositry to your machines IP address on the proper port (see below for default port info). It's meant to be used in conjunction with the [command-line tool Snowy Owl](https://github.com/mhkeller/snowy-owl-cli), which sets up a lot of that automatically for you.
 
 # Installation
 
 ### If you already have Node.js, Python & Pip
 
 ````
-git clone https://github.com/mhkeller/strangelove
-cd strangelove && sudo npm install
+git clone https://github.com/mhkeller/snowy-owl
+cd snowy-owl && sudo npm install
 ````
 
 You also want to install the Amazon Web Services Command-line interface, which is a python package.
@@ -72,7 +72,7 @@ aws_access_key_id=AKIAIOSFODNN7EXAMPLE
 aws_secret_access_key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 ````
 
-# Start Strangelove Server
+# Start Snowy Owl Server
 
 ````
 node src/server.js
@@ -80,9 +80,9 @@ node src/server.js
 
 This will only run the listening server for your current session only. That's only recommended for testing. By default, the server runs on port 9001.
 
-# Run Strangelove as a service
+# Run Snowy Owl as a service
 
-If you want to run Strangelove all day long, use the Forever module to run the server in the background.
+If you want to run Snowy Owl all day long, use the Forever module to run the server in the background.
 
 You'll want to install the module globally:
 
@@ -120,24 +120,24 @@ Note: The above line assumes that Forever is installed in `/usr/bin/`. To double
 
 # Start the staging server
 
-Strangelove uses [git-static-diffuse](https://github.com/mhkeller/git-static-diffuse) to allow you to view your all of the commits and branches of your repositories through a web server with the following url structure (defaulting to port 3000):
+Snowy Owl uses [git-static-diffuse](https://github.com/mhkeller/git-static-diffuse) to allow you to view your all of the commits and branches of your repositories through a web server with the following url structure (defaulting to port 3000):
 
 ````
-http://your-strangelove-server.com:3000/repository-name/commit-or-branch-name/path/to/file.html
+http://your-snowy-owl-server.com:3000/repository-name/commit-or-branch-name/path/to/file.html
 ````
 
 To test the server, run:
 
 ````
-node full/path/to/strangelove/node_modules/git-static-diffuse/examples/server.js --repositories full/path/to/strangelove/repositories
+node full/path/to/snowy-owl/node_modules/git-static-diffuse/examples/server.js --repositories full/path/to/snowy-owl/repositories
 ````
 
 You can specify a port other than 3000 by using `--port <replace-with-port-number>` as an option.
 
-On Ubunutu, for instance, assuming you've installed Strangelove in a folder called `tasks`, those paths and an alternate port setting could be:
+On Ubunutu, for instance, assuming you've installed Snowy Owl in a folder called `tasks`, those paths and an alternate port setting could be:
 
 ````
-node /home/ubuntu/tasks/strangelove/node_modules/git-static-diffuse/examples/server.js --repositories /home/ubuntu/tasks/strangelove/repositories --port 3001
+node /home/ubuntu/tasks/snowy-owl/node_modules/git-static-diffuse/examples/server.js --repositories /home/ubuntu/tasks/snowy-owl/repositories --port 3001
 ````
 
 # Start the staging server as a service
@@ -147,11 +147,11 @@ Follow the same instructions as above for using Forever and also add the `@reboo
 Starting Forever: 
 
 ````
-/usr/bin/forever start /home/ubuntu/tasks/strangelove/node_modules/git-static-diffuse/examples/server.js --repositories /home/ubuntu/tasks/strangelove/repositories
+/usr/bin/forever start /home/ubuntu/tasks/snowy-owl/node_modules/git-static-diffuse/examples/server.js --repositories /home/ubuntu/tasks/snowy-owl/repositories
 ````
 
 And in your crontab:
 
 ````
-@reboot /usr/bin/forever start /home/ubuntu/tasks/strangelove/node_modules/git-static-diffuse/examples/server.js --repositories /home/ubuntu/tasks/strangelove/repositories
+@reboot /usr/bin/forever start /home/ubuntu/tasks/snowy-owl/node_modules/git-static-diffuse/examples/server.js --repositories /home/ubuntu/tasks/snowy-owl/repositories
 ````
