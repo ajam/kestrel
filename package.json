@@ -1,6 +1,6 @@
 {
-  "name": "professor-blastoff-server",
-  "version": "0.0.1",
+  "name": "strangelove",
+  "version": "0.1.0",
   "description": "A hook to listen to GitHub and blast off to S3.",
   "main": "src/server.js",
   "scripts": {
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/mhkeller/professor-blastoff-server"
+    "url": "https://github.com/mhkeller/strangelove"
   },
   "author": "Michael Keller",
   "license": "MIT",
@@ -19,7 +19,7 @@
     "git-static-diffuse": "0.0.4"
   },
   "bugs": {
-    "url": "https://github.com/mhkeller/professor-blastoff-server/issues"
+    "url": "https://github.com/mhkeller/strangelove/issues"
   },
-  "homepage": "https://github.com/mhkeller/professor-blastoff-server"
+  "homepage": "https://github.com/mhkeller/strangelove"
 }
