@@ -11,7 +11,7 @@ A git server that mirrors repositories on a GitHub account at every commit and p
 
 ===========
 
-The Snowy Owl server requires that you've already set up a webhook from your Github repositry to your machines IP address on the proper port (see below for default port info). It's meant to be used in conjunction with the [command-line tool Snowy Owl](https://github.com/mhkeller/snowy-owl-cli), which sets up a lot of that automatically for you.
+The Snowy Owl server requires that you've already set up a webhook from your Github repositry to your machines IP address on the proper port (see below for default port info). It's meant to be used in conjunction with the [Snowy Owl command-line interface](https://github.com/mhkeller/snowy-owl-cli), which sets up a lot of that automatically for you.
 
 # Installation
 
