@@ -13,6 +13,8 @@ A git server that mirrors repositories on a GitHub account at every commit and p
 
 The Snowy Owl server requires that you've already set up a webhook from your Github repositry to your machines IP address on the proper port (see below for default port info). It's meant to be used in conjunction with the [command-line tool Snowy Owl](https://github.com/mhkeller/snowy-owl-cli), which sets up a lot of that automatically for you.
 
+###### A note on paths: Except in crontabs, relative paths will suffice. I've supplied the full paths in many of these commands for clarity because I find relative paths can be confusing in some documentation since it's not always clear what directory you're supposed to be in. As a result, a lot of these commands look more unwieldy than they are. Hopefully they're a bit clearer once you look past the slashes.
+
 # Installation
 
 ### If you already have Node.js, Python & Pip
@@ -163,32 +165,33 @@ Snowy Owl uses [git-static-diffuse](https://github.com/mhkeller/git-static-diffu
 http://your-snowy-owl-server.com:3000/repository-name/commit-or-branch-name/path/to/file.html
 ````
 
-To test the server, run:
+Install its command-line interface with
 
 ````
-node full/path/to/snowy-owl/node_modules/git-static-diffuse/examples/server.js --repositories full/path/to/snowy-owl/repositories
+npm install git-static-diffuse -g
 ````
+
+To test the server, `cd` into `repositories` and run
+
+````
+moire start
+````
+
+Now go to <http://your-server.com:3000> and you should see your repositories. If on Amazon EC2, make sure you open up the port in your security group.
 
 You can specify a port other than 3000 by using `--port <replace-with-port-number>` as an option.
 
-On Ubunutu, for instance, assuming you've installed Snowy Owl in a folder called `tasks`, those paths and an alternate port setting could be:
+# Start the staging server as a service 
+
+Starting Forever from within your repositories directory: 
 
 ````
-node /home/ubuntu/tasks/snowy-owl/node_modules/git-static-diffuse/examples/server.js --repositories /home/ubuntu/tasks/snowy-owl/repositories --port 3001
+forever start moire start
 ````
 
-# Start the staging server as a service
-
-Follow the same instructions as above for using Forever and also add the `@reboot` statement to your crontab.
-
-Starting Forever: 
+You'll have to give forever and your crontab the full path to your repositories folder in your crontab:
 
 ````
-/usr/bin/forever start /home/ubuntu/tasks/snowy-owl/node_modules/git-static-diffuse/examples/server.js --repositories /home/ubuntu/tasks/snowy-owl/repositories
-````
+@reboot /usr/bin/forever start /usr/bin/moire start --repositories /home/ubuntu/tasks/snowy-owl/repositories
 
-And in your crontab:
-
-````
-@reboot /usr/bin/forever start /home/ubuntu/tasks/snowy-owl/node_modules/git-static-diffuse/examples/server.js --repositories /home/ubuntu/tasks/snowy-owl/repositories
 ````
