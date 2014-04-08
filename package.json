@@ -1,6 +1,6 @@
 {
   "name": "snowy-owl",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A hook to listen to GitHub and blast off to S3.",
   "main": "src/server.js",
   "scripts": {
@@ -16,7 +16,7 @@
     "hookshot": "0.0.2",
     "execSync": "^1.0.1-pre",
     "request": "~2.34.0",
-    "git-static-diffuse": "0.0.4"
+    "git-static-diffuse": "0.2.1"
   },
   "bugs": {
     "url": "https://github.com/mhkeller/snowy-owl/issues"

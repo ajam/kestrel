@@ -21,7 +21,6 @@ var sh_commands = {
 		return ' && git remote add archived https://' + helpers.determineArchiveRemoteUrl(archive_info.type) + '/' + archive_info.account_name + '/' + repo_name + '.git';
 	},
 	fetchLatest: function(repo_name, archive_info){
-		// return '';
 		return 'cd repositories/' + repo_name + ' && git fetch origin && git checkout origin/master' + ((archive_info.enabled) ? this.pushToArchive() : '');
 	},
 	pushToArchive: function(){
