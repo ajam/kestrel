@@ -4,7 +4,7 @@ var hookshot = require('hookshot'),
 	request    = require('request');
 
 var config      = require('../config.json'),
-		sh_commands = require('./sh-commands.js')
+		sh_commands = require('./sh-commands.js');
 
 function verifyAccount(incoming_repo){
 	if (incoming_repo == config.github_listener.account_name) return true;
