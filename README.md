@@ -1,6 +1,8 @@
 Snowy Owl
 ============
 
+![](https://raw.githubusercontent.com/mhkeller/snowy-owl/master/assets/snowy-owl.png)
+
 Notice: This is still a work in progress. I'll remove this notice when it's fairly stable. Or, follow the version number.
 
 A git server that mirrors repositories on a GitHub account at every commit and pushes that repository to a given S3 bucket if the commit message contains a specified trigger string. Tested on Ubuntu 12.04.
