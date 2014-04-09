@@ -8,11 +8,11 @@
 		"bucket_name": "Your S3 bucket name",
 		"path": "2014/",
 		"sync_deploy_trigger": "String to trigger a sync to s3",
-		"exclude": [".git/*", ".*"],
 		"hard_deploy": {
 			"enabled": false,
 			"trigger": "String to trigger an overwrite of S3 files"
-		}
+		},
+		"exclude": [".git/*", ".*"]
 	},
 	"archive": {
 		"enabled": false,
