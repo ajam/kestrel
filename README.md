@@ -1,7 +1,7 @@
 Snowy Owl
 ============
 
-![](https://raw.)
+![](https://raw.githubusercontent.com/mhkeller/snowy-owl/master/assets/snowy-owl.png)
 
 Notice: This is still a work in progress. I'll remove this notice when it's fairly stable. Or, follow the version number.
 
