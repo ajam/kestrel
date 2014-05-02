@@ -32,15 +32,14 @@ function verifyCommitter(last_commit, cb){
 
 function createDirGitInit(info){
 	var repo_name = info.repository.name;
+
 	fs.mkdirSync('./repositories/' + repo_name);
 
 	var create_statement = sh_commands.createGitRepoAndRemotes(repo_name, info.repository.url);
   sh.run(create_statement);
 }
 function pullLatest(info){
-	var repo_name = info.repository.name;
-
-	if (!fs.existsSync('./repositories' + repo_name)){
+	if (!fs.existsSync('./repositories/' + info.repository.name)){
 		createDirGitInit(info);
 	}
 
