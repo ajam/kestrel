@@ -23,7 +23,7 @@ var sh_commands = {
 	},
 	trackAllBranches: function(repo_name){
 		console.log('repo-name', repo_name)
-		return 'pwd && for remote in $(git branch -r) ; do git branch --track $(echo $remote | cut -d '/' -f2) remotes/$remote; done';
+		return 'pwd && for remote in $(git branch -r) ; do git branch --track $(echo $remote | cut -d \'/\' -f2) remotes/$remote; done';
 	},
 	deploy: function(mode, repo_name, bucket_name, path, exclusions){
 		return 'aws s3 ' + mode + ' '+repo_name+' s3://'+bucket_name+'/'+path+repo_name+'/ --acl public-read ' + ((mode == 'cp') ? '--recursive' : '') + ' ' + helpers.excludeFiles(exclusions)
