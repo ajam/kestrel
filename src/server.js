@@ -34,7 +34,7 @@ function createDirGitInit(info){
 	var repo_name = info.repository.name;
 	fs.mkdirSync('./repositories/' + repo_name);
 
-	var create_statement = sh_commands.createGitRepoAndRemotes(repo_name, info.repository.url, config.archive);
+	var create_statement = sh_commands.createGitRepoAndRemotes(repo_name, info.repository.url);
   sh.run(create_statement);
 }
 function pullLatest(info){
