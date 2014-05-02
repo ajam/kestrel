@@ -16,7 +16,10 @@ var helpers = {
 var sh_commands = {
 	createGitRepoAndRemotes: function(url){
 		console.log('url',url);
-		return 'cd repositories && git clone ' + url + '.git && for remote in $(git branch -r) ; do git branch --track $(echo $remote | cut -d '/' -f2) remotes/$remote; done';
+		return 'cd repositories && git clone ' + url + '.git';
+	},
+	trackAllBranches: function(repo_name){
+		return 'cd repositories/' + repo_name + ' && for remote in $(git branch -r) ; do git branch --track $(echo $remote | cut -d '/' -f2) remotes/$remote; done';
 	},
 	fetchLatest: function(repo_name){
 		return 'cd repositories/' + repo_name + ' && git fetch --all && git pull --all';
