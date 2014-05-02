@@ -15,6 +15,7 @@ var helpers = {
 }
 var sh_commands = {
 	createGitRepoAndRemotes: function(url){
+		console.log(url);
 		return 'cd repositories && git clone ' + url + '.git && for remote in $(git branch -r) ; do git branch --track $(echo $remote | cut -d '/' -f2) remotes/$remote; done';
 	},
 	fetchLatest: function(repo_name){
