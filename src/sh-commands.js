@@ -19,6 +19,7 @@ var sh_commands = {
 		return 'cd repositories && git clone ' + url + '.git';
 	},
 	trackAllBranches: function(repo_name){
+		console.log('repo-name', repo_name)
 		return 'cd repositories/' + repo_name + ' && for remote in $(git branch -r) ; do git branch --track $(echo $remote | cut -d '/' -f2) remotes/$remote; done';
 	},
 	fetchLatest: function(repo_name){
