@@ -16,7 +16,7 @@
     "hookshot": "0.0.2",
     "execSync": "^1.0.1-pre",
     "request": "~2.34.0",
-    "git-static-diffuse": "~0.2.5"
+    "git-static-diffuse": "~0.2.6"
   },
   "bugs": {
     "url": "https://github.com/mhkeller/snowy-owl/issues"
