@@ -41,12 +41,13 @@ function createDirGitInit(info){
 function pullLatest(info){
 	var repo_name = info.repository.name;
 	if (!fs.existsSync('./repositories/' + repo_name)){
-		console.log(info)
 		createDirGitInit(info);
-	} else {
-		var fetch_statement = sh_commands.fetchLatest(repo_name);
-		sh.run(fetch_statement);
 	}
+	
+	var fetch_statement = sh_commands.fetchLatest(repo_name);
+	sh.run(fetch_statement);
+	var track_all_branches = sh_commands.trackAllBranches(repo_name);
+  sh.run(create_statement);
 }
 function checkForDeployMsg(last_commit){
 	var commit_msg = last_commit.message,
