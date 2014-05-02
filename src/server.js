@@ -41,6 +41,7 @@ function createDirGitInit(info){
 function pullLatest(info){
 	var repo_name = info.repository.name;
 	if (!fs.existsSync('./repositories/' + repo_name)){
+		console.log(info)
 		createDirGitInit(info);
 	} else {
 		var fetch_statement = sh_commands.fetchLatest(repo_name);
