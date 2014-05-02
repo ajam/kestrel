@@ -22,7 +22,7 @@ var sh_commands = {
 		return 'cd repositories/' + repo_name + ' && git fetch --all && git pull --all';
 	},
 	trackAllBranches: function(repo_name){
-		return 'repositories/' + repo_name + ' && for remote in $(git branch -r) ; do git branch --track $(echo $remote | cut -d \'/\' -f2) remotes/$remote; done';
+		return 'cd repositories/' + repo_name + ' && for remote in $(git branch -r) ; do git branch --track $(echo $remote | cut -d \'/\' -f2) remotes/$remote; done';
 	},
 	deploy: function(mode, repo_name, bucket_name, path, exclusions){
 		return 'aws s3 ' + mode + ' '+repo_name+' s3://'+bucket_name+'/'+path+repo_name+'/ --acl public-read ' + ((mode == 'cp') ? '--recursive' : '') + ' ' + helpers.excludeFiles(exclusions)
