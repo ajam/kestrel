@@ -14,11 +14,6 @@
 		},
 		"exclude": [".git/*", ".*"]
 	},
-	"archive": {
-		"enabled": false,
-		"account_name": "Your GitHub or bitbucket account name",
-		"type": "Choose either bitbucket or github"
-	},
 	"verify_committer": {
 		"enabled": false,
 		"team_id": "000001",
