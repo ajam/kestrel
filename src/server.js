@@ -35,7 +35,7 @@ function createDirGitInit(info){
 
 	fs.mkdirSync('./repositories/' + repo_name);
 
-	var create_statement = sh_commands.createGitRepoAndRemotes(info.repository.url);
+	var create_statement = sh_commands.createGitRepoAndRemotes(repo_name, info.repository.url);
   sh.run(create_statement);
 }
 function pullLatest(info){
@@ -43,7 +43,7 @@ function pullLatest(info){
 	if (!fs.existsSync('./repositories/' + repo_name)){
 		createDirGitInit(info);
 	}
-	
+
 	var fetch_statement = sh_commands.fetchLatest(repo_name);
 	sh.run(fetch_statement);
 	var track_all_branches = sh_commands.trackAllBranches(repo_name);
