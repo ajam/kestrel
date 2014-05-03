@@ -14,9 +14,8 @@ var helpers = {
 	}
 }
 var sh_commands = {
-	createGitRepoAndRemotes: function(url){
-		console.log('url',url);
-		return 'cd repositories && git clone ' + url + '.git';
+	createGitRepoAndRemotes: function(repo_name, url){
+		return 'cd repositories/'+repo_name+' && git remote set origin ' + url + '.git';
 	},
 	fetchLatest: function(repo_name){
 		return 'cd repositories/' + repo_name + ' && git fetch --all && git pull --all';
