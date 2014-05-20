@@ -185,10 +185,10 @@ You can specify a port other than 3000 by using `--port <replace-with-port-numbe
 
 # Start the staging server as a service 
 
-Starting Forever from within your repositories directory: 
+Starting Forever from within your repositories folder:
 
 ````
-forever start moire start
+forever start /usr/bin/moire start
 ````
 
 You'll have to give forever and your crontab the full path to your repositories folder in your crontab:
@@ -196,4 +196,11 @@ You'll have to give forever and your crontab the full path to your repositories 
 ````
 @reboot /usr/bin/forever start /usr/bin/moire start --repositories /home/ubuntu/tasks/snowy-owl/repositories
 
+````
+
+## Put it all together from the root Snowy Owl folder
+
+````
+forever start src/server
+forever start /usr/bin/moire --repositories repositories start
 ````
