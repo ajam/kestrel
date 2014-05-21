@@ -39,15 +39,25 @@ function createDirGitInit(info){
   sh.run(create_statement);
 }
 function pullLatest(info){
-	var repo_name = info.repository.name;
+	var repo_name = info.repository.name,
+		branch_name = info.ref.split('/')[2], // `ref: "refs/heads/<branchname>` => `branchname`
+		delete_branch;
+
 	if (!fs.existsSync('./repositories/' + repo_name)){
 		createDirGitInit(info);
 	}
 
 	var fetch_statement = sh_commands.fetchLatest(repo_name);
 	sh.run(fetch_statement);
+
+	// If its "after" sha is all zeros, then consider that branch deleted
+	if (!+info.after) {
+		delete_branch = sh_commands.deleteBranch(repo_name, branch_name);
+		sh.run(delete_branch);
+	}
+	
 	var track_all_branches = sh_commands.trackAllBranches(repo_name);
-  sh.run(track_all_branches);
+	sh.run(track_all_branches);
 }
 function checkForDeployMsg(last_commit){
 	var commit_msg = last_commit.message,
@@ -78,8 +88,8 @@ hookshot(function(info){
 	// But `info.commits` will be an empty array if you pushed a new branch with no commits
 	if (info.commits.length) {
 		most_recent_commit  = info.commits[info.commits.length - 1];
-	var deploy_status       = checkForDeployMsg(most_recent_commit);
-
+		deploy_status       = checkForDeployMsg(most_recent_commit);
+	}
 	// Is this coming from the whitelisted GitHub account?
 	if (is_account_verified){
 		pullLatest(info);
