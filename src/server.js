@@ -50,12 +50,12 @@ function pullLatest(info){
 	var fetch_statement = sh_commands.fetchLatest(repo_name);
 	sh.run(fetch_statement);
 
-	// If its "after" sha is all zeros, then consider that branch deleted
-	if (!+info.after) {
+	// If it's deleted, delete it!
+	if (info.deleted) {
 		delete_branch = sh_commands.deleteBranch(repo_name, branch_name);
 		sh.run(delete_branch);
 	}
-	
+
 	var track_all_branches = sh_commands.trackAllBranches(repo_name);
 	sh.run(track_all_branches);
 }
