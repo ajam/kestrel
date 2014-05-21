@@ -18,10 +18,13 @@ var sh_commands = {
 		return 'cd repositories/'+repo_name+' && git init && git remote add origin ' + url + '.git';
 	},
 	fetchLatest: function(repo_name){
-		return 'cd repositories/' + repo_name + ' && git fetch';
+		return 'cd repositories/' + repo_name + ' && git fetch --all';
 	},
 	trackAllBranches: function(repo_name){
-		return 'cd repositories/' + repo_name + ' && for remote in $(git branch -r) ; do git checkout $(echo $remote | cut -d \'/\' -f2); done';
+		return 'cd repositories/' + repo_name + ' && for remote in $(git branch -r) ; do git checkout $(echo $remote | cut -d \'/\' -f2) && git pull origin $(echo $remote | cut -d \'/\' -f2); done';
+	},
+	deleteBranch: function(repo_name, branch_name){
+		return 'cd repositories/' + repo_name + ' && git branch -D ' + branch_name;
 	},
 	deploy: function(mode, repo_name, bucket_name, path, exclusions){
 		return 'aws s3 ' + mode + ' '+repo_name+' s3://'+bucket_name+'/'+path+repo_name+'/ --acl public-read ' + ((mode == 'cp') ? '--recursive' : '') + ' ' + helpers.excludeFiles(exclusions)

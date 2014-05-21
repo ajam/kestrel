@@ -68,12 +68,17 @@ function deployToS3(deploy_type, info){
 	console.log(deploy_result.stdout);
 }
 
-hookshot('refs/heads/master', function(info){
+hookshot(function(info){
+	// Is this request coming from the specified GitHub Account?
+	var is_account_verified = verifyAccount(info.repository.owner.name);
+	// Is there a deploy message present?
+	var most_recent_commit,
+			deploy_status;
 	// The last commit in the array is the most recent
-	var most_recent_commit  = info.commits[info.commits.length - 1];
-
-	var is_account_verified = verifyAccount(info.repository.owner.name),
-	    deploy_status       = checkForDeployMsg(most_recent_commit);
+	// But `info.commits` will be an empty array if you pushed a new branch with no commits
+	if (info.commits.length) {
+		most_recent_commit  = info.commits[info.commits.length - 1];
+	var deploy_status       = checkForDeployMsg(most_recent_commit);
 
 	// Is this coming from the whitelisted GitHub account?
 	if (is_account_verified){
