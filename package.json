@@ -1,14 +1,14 @@
 {
-  "name": "snowy-owl",
-  "version": "0.2.0",
-  "description": "A hook to listen to GitHub and blast off to S3.",
+  "name": "kestrel-server",
+  "version": "0.1.0",
+  "description": "A hook to listen to GitHub and swoop files off to S3.",
   "main": "src/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/mhkeller/snowy-owl"
+    "url": "https://github.com/mhkeller/kestrel-server"
   },
   "author": "Michael Keller",
   "license": "MIT",
@@ -18,7 +18,7 @@
     "request": "~2.34.0"
   },
   "bugs": {
-    "url": "https://github.com/mhkeller/snowy-owl/issues"
+    "url": "https://github.com/mhkeller/kestrel-server/issues"
   },
-  "homepage": "https://github.com/mhkeller/snowy-owl"
+  "homepage": "https://github.com/mhkeller/kestrel-server"
 }
