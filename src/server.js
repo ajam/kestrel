@@ -86,7 +86,7 @@ function checkForDeployMsg(last_commit){
 	if (sync_deploy_regx.exec(commit_msg)) return 'sync';
 	return false;
 }
-function deployToS3(deploy_type, most_recent_commit){
+function deployToS3(deploy_type, info, most_recent_commit){
 	var repo_name   = info.repository.name,
 			local_path  = most_recent_commit.split('::')[1], // `published::output` -> `output` or `published::` -> `''`
 	    remote_path = config.s3.path || '';
@@ -97,7 +97,7 @@ function deployToS3(deploy_type, most_recent_commit){
 	var deploy_statement = sh_commands.deploy(deploy_type, repo_name, config.s3.bucket_name, local_path, remote_path, config.s3.exclude);
 	var deploy_result = sh.exec(deploy_statement);
 	// Log deployment result
-	console.log(deploy_result.stdout);
+	console.log('Deployed!'.green, deploy_result.stdout);
 }
 
 hookshot(function(info){
@@ -122,7 +122,7 @@ hookshot(function(info){
 
 				// Does the committer have deploy? privileges?
 				if (committer_approved) {
-					deployToS3(deploy_status, most_recent_commit);
+					deployToS3(deploy_status, info, most_recent_commit);
 				} else {
 					console.log('Unapproved committer attempted deployment.'.red)
 				}
