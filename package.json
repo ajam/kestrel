@@ -15,7 +15,8 @@
   "dependencies": {
     "hookshot": "0.0.2",
     "execSync": "^1.0.1-pre",
-    "request": "~2.34.0"
+    "request": "~2.34.0",
+    "colors": "~0.6.2"
   },
   "bugs": {
     "url": "https://github.com/mhkeller/kestrel-server/issues"

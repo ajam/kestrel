@@ -3,7 +3,8 @@
 var hookshot = require('hookshot'),
 	fs         = require('fs'),
 	sh         = require('execSync'),
-	request    = require('request');
+	request    = require('request'),
+	colors     = require('colors');
 
 var config      = require('../config.json'),
 		sh_commands = require('./sh-commands.js');
@@ -113,11 +114,14 @@ hookshot(function(info){
 			verifyCommitter(most_recent_commit, function(committer_approved){
 
 				// Does the committer have deploy? privileges?
-				if (committer_approved) deployToS3(deploy_status, most_recent_commit);
+				if (committer_approved) {
+					deployToS3(deploy_status, most_recent_commit);
+				} else {
+					console.log('Unapproved committer attempted deployment.'.red)
+				}
 			
 			});
 		}
-
 	}
 }).listen(config.github_listener.port);
 
