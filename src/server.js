@@ -88,11 +88,10 @@ function checkForDeployMsg(last_commit){
 }
 function deployToS3(deploy_type, info, most_recent_commit){
 	var repo_name   = info.repository.name,
-			local_path  = most_recent_commit.split('::')[1], // `published::output` -> `output` or `published::` -> `''`
-	    remote_path = config.s3.path || '';
-
-	// If a local path was specified, put a slash in front of it
-	if (local_path) local_path = '/' + local_path;
+			commit_parts = most_recent_commit.split('::'), // 'bucket_environment::trigger::local_path::remote_path' -> [bucket_environment, trigger, local_path, remote_path] 
+			bucket_environment  = commit_parts[0], // Either `prod` or `staging`
+			local_path  = commit_parts[2], // Either the repo_name or the repo_name/sub-directory
+	    remote_path = commit_parts[3] // Usually a year, e.g. 2014. The folder we'll be writing into
 
 	var deploy_statement = sh_commands.deploy(deploy_type, repo_name, config.s3.bucket_name, local_path, remote_path, config.s3.exclude);
 	var deploy_result = sh.exec(deploy_statement);
