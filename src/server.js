@@ -60,6 +60,9 @@ function pullLatest(info){
 
 	var track_all_branches = sh_commands.trackAllBranches(repo_name);
 	sh.run(track_all_branches);
+
+	var checkout_master = sh_commands.checkoutMaster(repo_name);
+	sh.run(checkout_master);
 }
 function checkForDeployMsg(last_commit){
 	var commit_msg = last_commit.message,
