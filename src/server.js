@@ -93,7 +93,7 @@ function deployToS3(deploy_type, info, most_recent_commit){
 			local_path  = commit_parts[2], // Either the repo_name or the repo_name/sub-directory
 	    remote_path = commit_parts[3] // Usually a year, e.g. 2014. The folder we'll be writing into
 
-	var deploy_statement = sh_commands.deploy(deploy_type, repo_name, config.s3.bucket_name, local_path, remote_path, config.s3.exclude);
+	var deploy_statement = sh_commands.deploy(deploy_type, repo_name, config.s3.buckets[bucket_environment], local_path, remote_path, config.s3.exclude);
 	var deploy_result = sh.exec(deploy_statement);
 	// Log deployment result
 	console.log('Deployed!'.green, deploy_result.stdout);
