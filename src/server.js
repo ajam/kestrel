@@ -14,9 +14,9 @@ function verifyAccount(incoming_repo){
 	return false;
 }
 function checkIfCommitterIsDeployer(members, committer){
-	members.some(function(member){
+	return members.some(function(member){
 		return member.login === committer;
-	})
+	});
 }
 function verifyCommitter(last_commit, cb){
 	// You only need to verify the deployer if you're using teams, otherwise disable it and always allow anyone pushing to that repo to deploy.
