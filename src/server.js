@@ -68,11 +68,12 @@ function checkForDeployMsg(last_commit){
 	if (sync_deploy_regx.exec(commit_msg)) return 'sync';
 	return false;
 }
-function deployToS3(deploy_type, info){
-	var repo_name = info.repository.name,
-	    path      = (config.s3.path) ? config.s3.path : '';
+function deployToS3(deploy_type, most_recent_commit){
+	var repo_name   = info.repository.name,
+			local_path  = most_recent_commit.split('::')[1]
+	    remote_path = config.s3.path || '';
 
-	var deploy_statement = sh_commands.deploy(deploy_type, repo_name, config.s3.bucket_name, path, config.s3.exclude);
+	var deploy_statement = sh_commands.deploy(deploy_type, repo_name, config.s3.bucket_name, local_path, remote_path, config.s3.exclude);
 	var deploy_result = sh.exec(deploy_statement);
 	// Log deployment result
 	console.log(deploy_result.stdout);
@@ -99,7 +100,7 @@ hookshot(function(info){
 			verifyCommitter(most_recent_commit, function(committer_approved){
 
 				// Does the committer have deploy? privileges?
-				if (committer_approved) deployToS3(deploy_status, info);
+				if (committer_approved) deployToS3(deploy_status, most_recent_commit);
 			
 			});
 		}

@@ -26,8 +26,8 @@ var sh_commands = {
 	deleteBranch: function(repo_name, branch_name){
 		return 'cd repositories/' + repo_name + ' && git branch -D ' + branch_name;
 	},
-	deploy: function(mode, repo_name, bucket_name, path, exclusions){
-		return 'aws s3 ' + mode + ' '+repo_name+' s3://'+bucket_name+'/'+path+repo_name+'/ --acl public-read ' + ((mode == 'cp') ? '--recursive' : '') + ' ' + helpers.excludeFiles(exclusions)
+	deploy: function(mode, repo_name, bucket_name, local_path, remote_path, exclusions){
+		return 'aws s3 ' + mode + ' ' + repo_name + ((local_path) ? '/' + local_path : '') + ' s3://' + bucket_name + '/' + remote_path + repo_name + '/ --acl public-read ' + ((mode == 'cp') ? '--recursive' : '') + ' ' + helpers.excludeFiles(exclusions)
 	}
 }
 
