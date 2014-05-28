@@ -28,6 +28,8 @@ function verifyCommitter(last_commit, cb){
 		  if (!error && response.statusCode == 200) {
 		  	var committer_is_deployer = checkIfCommitterIsDeployer(JSON.parse(body), committer);
 		    cb(committer_is_deployer);
+		  } else {
+		  	console.log('Error verifying committer'.red, JSON.stringify(error))
 		  }
 		})
 	}
