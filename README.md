@@ -1,19 +1,19 @@
-Snowy Owl
+Kestrel
 ============
 
-![](https://raw.githubusercontent.com/mhkeller/snowy-owl/master/assets/snowy-owl.png)
+![](https://raw.githubusercontent.com/mhkeller/kestrel/master/assets/kestrel.png)
 ###### Logo by [Clarisa Diaz](https://twitter.com/Clarii_D)
 Notice: This is still a work in progress. I'll remove this notice when it's fairly stable. Or, follow the version number.
 
 A git server that mirrors repositories on a GitHub account at every commit and pushes that repository to a given S3 bucket if the commit message contains a specified trigger string. Tested on Ubuntu 12.04.
 
-#### Read the [full setup instructions on the wiki](https://github.com/mhkeller/snowy-owl/wiki/Full-setup) for detailed steps on how to configure the server, clients and the required GitHub settings.
+#### Read the [full setup instructions on the wiki](https://github.com/mhkeller/kestrel/wiki/Full-setup) for detailed steps on how to configure the server, clients and the required GitHub settings.
 
 *The instructions below only cover the server.*
 
 ===========
 
-The Snowy Owl server requires that you've already set up a webhook from your Github repositry to your machines IP address on the proper port (see below for default port info). It's meant to be used in conjunction with the [Snowy Owl command-line interface](https://github.com/mhkeller/snowy-owl-cli), which sets up a lot of that automatically for you.
+The Kestrel server requires that you've already set up a webhook from your Github repositry to your machines IP address on the proper port (see below for default port info). It's meant to be used in conjunction with the [Kestrel command-line interface](https://github.com/mhkeller/kestrel-cli), which sets up a lot of that automatically for you.
 
 ###### A note on paths: Except in crontabs, relative paths will suffice. I've supplied the full paths in many of these commands for clarity because I find relative paths can be confusing in some documentation since it's not always clear what directory you're supposed to be in. As a result, a lot of these commands look more unwieldy than they are. Hopefully they're a bit clearer once you look past the slashes.
 
@@ -22,8 +22,8 @@ The Snowy Owl server requires that you've already set up a webhook from your Git
 ### If you already have Node.js, Python & Pip
 
 ````
-git clone https://github.com/mhkeller/snowy-owl
-cd snowy-owl && sudo npm install
+git clone https://github.com/mhkeller/kestrel
+cd kestrel && sudo npm install
 ````
 
 You also want to install the Amazon Web Services Command-line interface, which is a python package.
@@ -123,7 +123,7 @@ This will only run the listening server for your current session only. That's on
 
 # Run it as a service
 
-If you want to run Snowy Owl all day long, use the Forever module to run the server in the background.
+If you want to run Kestrel all day long, use the Forever module to run the server in the background.
 
 You'll want to install the module globally:
 
@@ -161,10 +161,10 @@ Note: The above line assumes that Forever is installed in `/usr/bin/`. To double
 
 # Start the staging server
 
-Snowy Owl uses [git-static-diffuse](https://github.com/mhkeller/git-static-diffuse) to allow you to view your all of the commits and branches of your repositories through a web server with the following url structure (defaulting to port 3000):
+Kestrel uses [git-static-diffuse](https://github.com/mhkeller/git-static-diffuse) to allow you to view your all of the commits and branches of your repositories through a web server with the following url structure (defaulting to port 3000):
 
 ````
-http://your-snowy-owl-server.com:3000/repository-name/commit-or-branch-name/path/to/file.html
+http://your-kestrel-server.com:3000/repository-name/commit-or-branch-name/path/to/file.html
 ````
 
 Install its command-line interface with
@@ -194,11 +194,11 @@ forever start /usr/bin/moire start
 You'll have to give forever and your crontab the full path to your repositories folder in your crontab:
 
 ````
-@reboot /usr/bin/forever start /usr/bin/moire start --repositories /home/ubuntu/tasks/snowy-owl/repositories
+@reboot /usr/bin/forever start /usr/bin/moire start --repositories /home/ubuntu/tasks/kestrel/repositories
 
 ````
 
-## Put it all together from the root Snowy Owl folder
+## Put it all together from the root Kestrel folder
 
 ````
 forever start src/server
