@@ -15,7 +15,7 @@ function verifyAccount(incoming_repo){
 }
 function checkIfCommitterIsDeployer(members, committer){
 	members.some(function(member){
-		return member.name === committer;
+		return member.login === committer;
 	})
 }
 function verifyCommitter(last_commit, cb){
