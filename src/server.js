@@ -78,8 +78,11 @@ function checkForDeployMsg(last_commit){
 }
 function deployToS3(deploy_type, most_recent_commit){
 	var repo_name   = info.repository.name,
-			local_path  = most_recent_commit.split('::')[1]
+			local_path  = most_recent_commit.split('::')[1], // `published::output` -> `output` or `published::` -> `''`
 	    remote_path = config.s3.path || '';
+
+	// If a local path was specified, put a slash in front of it
+	if (local_path) local_path = '/' + local_path;
 
 	var deploy_statement = sh_commands.deploy(deploy_type, repo_name, config.s3.bucket_name, local_path, remote_path, config.s3.exclude);
 	var deploy_result = sh.exec(deploy_statement);
