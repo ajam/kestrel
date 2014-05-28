@@ -49,6 +49,7 @@ function pullLatest(info){
 		createDirGitInit(info);
 	}
 
+	// Download latest data
 	var fetch_statement = sh_commands.fetchLatest(repo_name);
 	sh.run(fetch_statement);
 
@@ -58,9 +59,11 @@ function pullLatest(info){
 		sh.run(delete_branch);
 	}
 
+	// Update all branches
 	var track_all_branches = sh_commands.trackAllBranches(repo_name);
 	sh.run(track_all_branches);
 
+	// Put the working tree back on to master
 	var checkout_master = sh_commands.checkoutMaster(repo_name);
 	sh.run(checkout_master);
 }
