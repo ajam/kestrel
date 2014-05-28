@@ -78,12 +78,12 @@ function pullLatest(info){
 	sh.run(checkout_master);
 }
 function checkForDeployMsg(last_commit){
-	var commit_msg = last_commit.message,
+	var commit_trigger = last_commit.message.split('::')[1], // 'bucket_environment::trigger::local_path::remote_path' -> "trigger"
 	    cp_deploy_regx   = new RegExp(config.s3.hard_deploy.trigger),
 	    sync_deploy_regx = new RegExp(config.s3.sync_deploy_trigger);
 
-	if (config.s3.hard_deploy.enabled && cp_deploy_regx.exec(commit_msg)) return 'cp';
-	if (sync_deploy_regx.exec(commit_msg)) return 'sync';
+	if (config.s3.hard_deploy.enabled && cp_deploy_regx.exec(commit_trigger)) return 'hard';
+	if (sync_deploy_regx.exec(commit_trigger)) return 'sync';
 	return false;
 }
 function deployToS3(deploy_type, info, most_recent_commit){
