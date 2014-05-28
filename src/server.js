@@ -24,7 +24,12 @@ function verifyCommitter(last_commit, cb){
 		cb(true);
 	}else{
 		var committer = last_commit.committer.username;
-		request('https://api.github.com/teams/' + config.verify_committer.team_id + '/members?access_token=' + config.verify_committer.access_token, function (error, response, body) {
+		request({
+			url: 'https://api.github.com/teams/' + config.verify_committer.team_id + '/members?access_token=' + config.verify_committer.access_token,
+			headers: : {
+        'User-Agent': 'Kestrel-publisher'
+    		}
+    	}, function (error, response, body) {
 		  if (!error) {
 		  	var committer_is_deployer = checkIfCommitterIsDeployer(JSON.parse(body), committer);
 		    cb(committer_is_deployer);
