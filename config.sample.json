@@ -16,7 +16,7 @@
 	},
 	"verify_committer": {
 		"enabled": false,
-		"team_id": "000001",
-		"access_token": "Your access token"
+		"access_token": "Your access token",
+		"team_id": "000001"
 	}
 }
