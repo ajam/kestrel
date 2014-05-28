@@ -25,7 +25,7 @@ function verifyCommitter(last_commit, cb){
 	}else{
 		var committer = last_commit.committer.username;
 		request('https://api.github.com/teams/' + config.verify_committer.team_id + '/members?access_token=' + config.verify_committer.access_token, function (error, response, body) {
-		  if (!error && response.statusCode == 200) {
+		  if (!error) {
 		  	var committer_is_deployer = checkIfCommitterIsDeployer(JSON.parse(body), committer);
 		    cb(committer_is_deployer);
 		  } else {
