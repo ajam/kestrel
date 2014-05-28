@@ -1,3 +1,5 @@
+'use-strict'
+
 var hookshot = require('hookshot'),
 	fs         = require('fs'),
 	sh         = require('execSync'),
