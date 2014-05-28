@@ -23,6 +23,9 @@ var sh_commands = {
 	trackAllBranches: function(repo_name){
 		return 'cd repositories/' + repo_name + ' && for remote in $(git branch -r) ; do git checkout $(echo $remote | cut -d \'/\' -f2) && git pull origin $(echo $remote | cut -d \'/\' -f2); done';
 	},
+	checkoutMaster: function(repo_name){
+		return 'cd repositories/' + repo_name + ' && git checkout master';
+	},
 	deleteBranch: function(repo_name, branch_name){
 		return 'cd repositories/' + repo_name + ' && git branch -D ' + branch_name;
 	},
