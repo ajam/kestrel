@@ -122,7 +122,7 @@ hookshot(function(info){
 
 				// Does the committer have deploy? privileges?
 				if (committer_approved) {
-					deployToS3(deploy_status, info, most_recent_commit);
+					deployToS3(deploy_status, info, most_recent_commit.message);
 				} else {
 					console.log('Unapproved committer attempted deployment.'.red)
 				}
