@@ -41,7 +41,7 @@ function verifyCommitter(last_commit, cb){
 }
 
 function createDirGitInit(info){
-	console.log('Creating git repository...'.green)
+	console.log('Creating folder and git repository...'.yellow);
 	var repo_name = info.repository.name;
 
 	fs.mkdirSync('./repositories/' + repo_name);
@@ -49,8 +49,9 @@ function createDirGitInit(info){
 	var remote_url_arr = info.repository.url.split('//');
 	var authenticated_remote_url = remote_url_arr[0] + '//' + config.verify_committer.access_token + '@' + remote_url_arr[1];
 	var create_statement = sh_commands.createGitRepoAndRemotes(repo_name, authenticated_remote_url);
-	console.log(create_statement)
+	console.log(create_statement);
   sh.run(create_statement);
+	console.log('Git created!'.green);
 }
 function pullLatest(info){
 	var repo_name = info.repository.name,
