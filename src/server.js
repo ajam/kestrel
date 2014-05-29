@@ -46,7 +46,7 @@ function createDirGitInit(info){
 	fs.mkdirSync('./repositories/' + repo_name);
 
 	var remote_url_arr = info.repository.url.split('//');
-	var authenticated_remote_url = url_arr[0] + '//' + config.verify_committer.access_token + '@' + remote_url_arr[1];
+	var authenticated_remote_url = remote_url_arr[0] + '//' + config.verify_committer.access_token + '@' + remote_url_arr[1];
 	var create_statement = sh_commands.createGitRepoAndRemotes(repo_name, authenticated_remote_url);
   sh.run(create_statement);
 }
