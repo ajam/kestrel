@@ -10,7 +10,7 @@ var sh_commands = {
 		return 'cd repositories/'+repo_name+' && git init && git remote add origin ' + url;
 	},
 	fetchLatest: function(repo_name){
-		return 'cd repositories/' + repo_name + ' && git fetch --all';
+		return 'cd repositories/' + repo_name + ' && git fetch origin';
 	},
 	trackAllBranches: function(repo_name){
 		return 'cd repositories/' + repo_name + ' && for remote in $(git branch -r) ; do git checkout $(echo $remote | cut -d \'/\' -f2) && git pull origin $(echo $remote | cut -d \'/\' -f2); done';
