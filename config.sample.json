@@ -14,7 +14,7 @@
 			"enabled": false,
 			"trigger": "String to trigger an overwrite of S3 files"
 		},
-		"exclude": [".git/*", ".*"]
+		"exclude": [".git/*", ".*","_*"]
 	},
 	"verify_committer": {
 		"enabled": false,
