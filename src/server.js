@@ -91,12 +91,12 @@ function checkForDeployMsg(last_commit){
 }
 function deployToS3(deploy_type, info, most_recent_commit){
 	var repo_name   = info.repository.name,
-			commit_parts = most_recent_commit.split('::'), // 'bucket_environment::trigger::local_path::remote_path' -> [bucket_environment, trigger, local_path, remote_path] 
+			commit_parts = most_recent_commit.split('::'), // 'bucket_environment::trigger::local_path::remote_path' -> [bucket_environment, trigger, local_path, remote_path], e.g. `staging::sync-flamingo::kestrel-test::2014/kestrel-cli` 
 			bucket_environment  = commit_parts[0], // Either `prod` or `staging`
-			local_path  = commit_parts[2], // Either the repo_name or the repo_name/sub-directory
-	    remote_path = commit_parts[3] // Usually a year, e.g. 2014. The folder we'll be writing into
+			local_path  = commit_parts[2], // Either `repo_name` or `repo_name/sub-directory`
+	    remote_path = commit_parts[3] // The folder we'll be writing into. An enclosing folder and the repo name plus any sub-directory, e.g. `2014/kestrel-test` or `2014/kestrel-test/output`
 
-	var deploy_statement = sh_commands.deploy(deploy_type, repo_name, config.s3.buckets[bucket_environment], local_path, remote_path, config.s3.exclude);
+	var deploy_statement = sh_commands.deploy(deploy_type, config.s3.buckets[bucket_environment], local_path, remote_path, config.s3.exclude);
 	var deploy_result = sh.exec(deploy_statement);
 	// Log deployment result
 	console.log('Deployed!'.green, deploy_result.stdout);

@@ -21,8 +21,8 @@ var sh_commands = {
 	deleteBranch: function(repo_name, branch_name){
 		return 'cd repositories/' + repo_name + ' && git branch -D ' + branch_name;
 	},
-	deploy: function(mode, repo_name, bucket_name, local_path, remote_path, exclusions){
-		return 'cd repositories && aws s3 sync ' + local_path + ' s3://' + bucket_name + '/' + remote_path + '/' + repo_name + '/ --acl public-read ' + ((mode == 'hard') ? '--delete' : '') + ' ' + helpers.excludeFiles(exclusions)
+	deploy: function(mode, bucket_name, local_path, remote_path, exclusions){
+		return 'cd repositories && aws s3 sync ' + local_path + ' s3://' + bucket_name + '/' + remote_path + '/ --acl public-read ' + ((mode == 'hard') ? '--delete' : '') + ' ' + helpers.excludeFiles(exclusions)
 	}
 }
 
