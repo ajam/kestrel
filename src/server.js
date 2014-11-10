@@ -46,7 +46,7 @@ function sendEmail(most_recent_commit, msg){
 		if(error){
 			console.log('Error in email sending'.red, error);
 		}else{
-			console.log('Email success!'.green);
+			console.log('Email success to '.green + committer_name + '<' + committer_email + '>' +'!');
 		}
 	});
 }
@@ -146,7 +146,7 @@ function deployToS3(deploy_type, info, most_recent_commit){
 		// Log deployment result
 		console.log('Deployed!'.green, stdout);
 		if (config.email.enabled) {
-			sendEmail(most_recent_commit, 'I just performed a '+deploy_type+' to S3 *'+bucket_environment+'* from the local folder of ' + local_path + ' to the S3 folder ' + remote_path + '\n\n\nHere\'s some more output.\n\n'+stdout);
+			sendEmail(most_recent_commit, 'I just performed a <strong>'+deploy_type+'</strong> to S3 <strong>*'+bucket_environment+'*</strong> containing '+ info.commits.length + commits.\n\nFrom the local folder of `' + local_path + '`\n\nTo the S3 folder `' + remote_path + '`\n\n\nHere\'s some more output:\n'+stdout);
 		}
 	});
 }
