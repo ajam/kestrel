@@ -146,7 +146,7 @@ function deployToS3(deploy_type, info, most_recent_commit){
 		// Log deployment result
 		console.log('Deployed!'.green, stdout);
 		if (config.email.enabled) {
-			sendEmail(most_recent_commit, 'I just performed a <strong>'+deploy_type+'</strong> to S3 <strong>*'+bucket_environment+'*</strong> containing '+ info.commits.length + commits.\n\nFrom the local folder of `' + local_path + '`\n\nTo the S3 folder `' + remote_path + '`\n\n\nHere\'s some more output:\n'+stdout);
+			sendEmail(most_recent_commit, 'I just performed a <strong>'+deploy_type+'</strong> to S3 <strong>*'+bucket_environment+'*</strong> containing '+ info.commits.length + 'commits.\n\nFrom the local folder of `' + local_path + '`\n\nTo the S3 folder `' + remote_path + '`\n\n\nHere\'s some more output:\n'+stdout);
 		}
 	});
 }
