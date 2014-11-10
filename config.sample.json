@@ -23,9 +23,11 @@
 	},
 	"email": {
 		"enabled": false,
-		"service": "Which service to use, e.g. Gmail",
+		"service": "Which service to use, e.g. gmail. Full list: https://github.com/andris9/nodemailer-wellknown#supported-services",
 		"address": "The email account that will send you stdout",
 		"name": "The name on this account.",
-		"password": "It's password"
+		"clientId": "Your Google app client id. See http://masashi-k.blogspot.com/2013/06/sending-mail-with-gmail-using-xoauth2.html",
+		"clientSecret": "Your Google app client secret",
+		"refreshToken": "Your Google app client secret"
 	}
 }

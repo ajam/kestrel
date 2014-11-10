@@ -19,7 +19,9 @@ if (config.email.enabled){
 			service: config.email.service,
 			auth: {
 				user: config.email.address,
-				pass: config.email.password
+				clientId: config.email.clientId,
+				clientSecret: config.email.clientSecret,
+				refreshToken: config.email.refreshToken
 			}
 		});
 
