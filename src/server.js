@@ -82,7 +82,7 @@ function pullLatest(info){
 	sh.run(checkout_master);
 }
 function checkForDeployMsg(last_commit){
-	console.log('Checking if deploy message in...'.yellow, ast_commit.message);
+	console.log('Checking if deploy message in...'.yellow, last_commit.message);
 	var commit_trigger = last_commit.message.split('::')[1], // 'bucket_environment::trigger::local_path::remote_path' -> "trigger"
 	    cp_deploy_regx   = new RegExp(config.s3.hard_deploy.trigger),
 	    sync_deploy_regx = new RegExp(config.s3.sync_deploy_trigger);
