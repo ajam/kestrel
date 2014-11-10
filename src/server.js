@@ -140,7 +140,7 @@ function deployToS3(deploy_type, info, most_recent_commit){
 			bucket_environment  = commit_parts[0], // Either `prod` or `staging`
 			local_path  = commit_parts[2], // Either `repo_name` or `repo_name/sub-directory`
 	    remote_path = commit_parts[3], // The folder we'll be writing into. An enclosing folder and the repo name plus any sub-directory, e.g. `2014/kestrel-test` or `2014/kestrel-test/output`
-	    s = 's',
+	    s = 's';
 
 	if (info.commits.length == 1){
 		s = '';
