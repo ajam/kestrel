@@ -18,10 +18,12 @@ if (config.email.enabled){
 	email_transporter = nodemailer.createTransport({
 			service: config.email.service,
 			auth: {
-				user: config.email.address,
-				clientId: config.email.clientId,
-				clientSecret: config.email.clientSecret,
-				refreshToken: config.email.refreshToken
+				XOAuth2: {
+					user: config.email.address,
+					clientId: config.email.clientId,
+					clientSecret: config.email.clientSecret,
+					refreshToken: config.email.refreshToken
+				}
 			}
 		});
 
