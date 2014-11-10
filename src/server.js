@@ -9,20 +9,25 @@ var hookshot = require('hookshot'),
 	nodemailer = require('nodemailer');
 
 var config      = require('../config.json'),
-		sh_commands = require('./sh-commands.js');
+		sh_commands = require('./sh-commands.js'),
+		email_transporter,
+		email_options;
 
-// Create reusable transporter object using SMTP transport
-var email_transporter = nodemailer.createTransport({
-		service: config.email.service,
-		auth: {
-			user: config.email.address,
-			pass: config.email.password
-		}
-	}),
+if (config.email.enabled){
+	// Create reusable transporter object using SMTP transport
+	email_transporter = nodemailer.createTransport({
+			service: config.email.service,
+			auth: {
+				user: config.email.address,
+				pass: config.email.password
+			}
+		});
+
 	email_options = {
 		from: config.email.name + ' <'+config.email.address+'>' ,
 		subject: '[Kestrel] Status update'
 	};
+}
 
 function sendEmail(mostRecentCommit, msg){
 	var committer = most_recent_commit.committer
@@ -133,7 +138,9 @@ function deployToS3(deploy_type, info, most_recent_commit){
 	exec(deploy_statement, function(error, stdout){
 		// Log deployment result
 		console.log('Deployed!'.green, stdout);
-		sendEmail(most_recent_commit, 'I just performed a '+deploy_type+' to S3 *'+bucket_environment+'* from the local folder of ' + local_path + ' to the S3 folder ' + remote_path + '\n\n\nHere\'s some more output.\n\n'+stdout);
+		if (config.email.enabled) {
+			sendEmail(most_recent_commit, 'I just performed a '+deploy_type+' to S3 *'+bucket_environment+'* from the local folder of ' + local_path + ' to the S3 folder ' + remote_path + '\n\n\nHere\'s some more output.\n\n'+stdout);
+		}
 	});
 }
 
@@ -153,7 +160,9 @@ hookshot(function(info){
 	// Is this coming from the whitelisted GitHub account?
 	if (is_account_verified){
 		pullLatest(info);
-		sendEmail(most_recent_commit, 'Pulled down '+info.commits.length+' commits. The most recent was made at ' + most_recent_commit.timestamp + ': '+ most_recent_commit.url);
+		if (config.email.enabled){
+			sendEmail(most_recent_commit, 'Pulled down '+info.commits.length+' commits. The most recent was made at ' + most_recent_commit.timestamp + ': '+ most_recent_commit.url);
+		}
 
 		// Are we deploying? Has that option been enabled and does the commit have the appropriate message?
 		if (config.s3.enabled && deploy_status){

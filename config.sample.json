@@ -22,6 +22,7 @@
 		"team_id": "000001"
 	},
 	"email": {
+		"enabled": false,
 		"service": "Which service to use, e.g. Gmail",
 		"address": "The email account that will send you stdout",
 		"name": "The name on this account.",
