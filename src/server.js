@@ -5,10 +5,40 @@ var hookshot = require('hookshot'),
 	exec       = require('child_process').exec,
 	sh         = require('execSync'),
 	request    = require('request'),
-	colors     = require('colors');
+	colors     = require('colors'),
+	nodemailer = require('nodemailer');
 
 var config      = require('../config.json'),
 		sh_commands = require('./sh-commands.js');
+
+// Create reusable transporter object using SMTP transport
+var email_transporter = nodemailer.createTransport({
+		service: config.email.service,
+		auth: {
+			user: config.email.address,
+			pass: config.email.password
+		}
+	}),
+	email_options = {
+		from: config.email.name + ' <'+config.email.address+'>' ,
+		subject: '[Kestrel] Status update'
+	};
+
+function sendEmail(mostRecentCommit, msg){
+	var committer = most_recent_commit.committer
+	var committer_email = committer.email,
+			committer_name  = committer.name;
+
+	email_options.to = committer_email;
+	email_options.text = 'Hi '+ committer_name+',\n\n' + msg + '\n\n\n'+'Talk to you later,\n\nKestrel Songs';
+	email_transporter.sendMail(email_options, function(error, info){
+		if(error){
+			console.log('Error in email sending'.red, error);
+		}else{
+			console.log('Email success!'.green);
+		}
+	});
+}
 
 function verifyAccount(incoming_repo){
 	if (incoming_repo == config.github_listener.account_name) return true;
@@ -56,8 +86,8 @@ function createDirGitInit(info){
 }
 function pullLatest(info){
 	var repo_name = info.repository.name,
-		branch_name = info.ref.split('/')[2], // `ref: "refs/heads/<branchname>` => `branchname`
-		delete_branch;
+			branch_name = info.ref.split('/')[2], // `ref: "refs/heads/<branchname>` => `branchname`
+			delete_branch;
 
 	if (!fs.existsSync('./repositories/' + repo_name)){
 		createDirGitInit(info);
@@ -103,6 +133,7 @@ function deployToS3(deploy_type, info, most_recent_commit){
 	exec(deploy_statement, function(error, stdout){
 		// Log deployment result
 		console.log('Deployed!'.green, stdout);
+		sendEmail(most_recent_commit, 'I just performed a '+deploy_type+' to S3 *'+bucket_environment+'* from the local folder of ' + local_path + ' to the S3 folder ' + remote_path + '\n\n\nHere\'s some more output.\n\n'+stdout);
 	});
 }
 
@@ -122,6 +153,7 @@ hookshot(function(info){
 	// Is this coming from the whitelisted GitHub account?
 	if (is_account_verified){
 		pullLatest(info);
+		sendEmail(most_recent_commit, 'Pulled down '+info.commits.length+' commits. The most recent was made at ' + most_recent_commit.timestamp + ': '+ most_recent_commit.url);
 
 		// Are we deploying? Has that option been enabled and does the commit have the appropriate message?
 		if (config.s3.enabled && deploy_status){
