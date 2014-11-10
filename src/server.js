@@ -2,6 +2,7 @@
 
 var hookshot = require('hookshot'),
 	fs         = require('fs'),
+	exec       = require('child_process').exec,
 	sh         = require('execSync'),
 	request    = require('request'),
 	colors     = require('colors');
@@ -97,9 +98,10 @@ function deployToS3(deploy_type, info, most_recent_commit){
 	    remote_path = commit_parts[3] // The folder we'll be writing into. An enclosing folder and the repo name plus any sub-directory, e.g. `2014/kestrel-test` or `2014/kestrel-test/output`
 
 	var deploy_statement = sh_commands.deploy(deploy_type, config.s3.buckets[bucket_environment], local_path, remote_path, config.s3.exclude);
-	var deploy_result = sh.exec(deploy_statement);
-	// Log deployment result
-	console.log('Deployed!'.green, deploy_result.stdout);
+	exec(deploy_statement, function(error, stdout){
+		// Log deployment result
+		console.log('Deployed!'.green, stdout);
+	});
 }
 
 hookshot(function(info){
