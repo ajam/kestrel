@@ -30,7 +30,7 @@ if (config.email.enabled){
 }
 
 function sendEmail(most_recent_commit, msg){
-	var committer = most_recent_commit.committer
+	var committer = most_recent_commit.committer;
 	var committer_email = committer.email,
 			committer_name  = committer.name;
 
@@ -128,7 +128,8 @@ function checkForDeployMsg(last_commit){
 }
 function deployToS3(deploy_type, info, most_recent_commit){
 	var repo_name   = info.repository.name,
-			commit_parts = most_recent_commit.split('::'), // 'bucket_environment::trigger::local_path::remote_path' -> [bucket_environment, trigger, local_path, remote_path], e.g. `staging::sync-flamingo::kestrel-test::2014/kestrel-cli` 
+			last_commit_msg = most_recent_commit.message,
+			commit_parts = last_commit_msg.split('::'), // 'bucket_environment::trigger::local_path::remote_path' -> [bucket_environment, trigger, local_path, remote_path], e.g. `staging::sync-flamingo::kestrel-test::2014/kestrel-cli` 
 			bucket_environment  = commit_parts[0], // Either `prod` or `staging`
 			local_path  = commit_parts[2], // Either `repo_name` or `repo_name/sub-directory`
 	    remote_path = commit_parts[3] // The folder we'll be writing into. An enclosing folder and the repo name plus any sub-directory, e.g. `2014/kestrel-test` or `2014/kestrel-test/output`
@@ -160,9 +161,9 @@ hookshot(function(info){
 	// Is this coming from the whitelisted GitHub account?
 	if (is_account_verified){
 		pullLatest(info);
-		if (config.email.enabled){
-			sendEmail(most_recent_commit, 'Pulled down '+info.commits.length+' commits. The most recent was made at ' + most_recent_commit.timestamp + ': '+ most_recent_commit.url);
-		}
+		// if (config.email.enabled){
+		// 	sendEmail(most_recent_commit, 'Pulled down '+info.commits.length+' commits. The most recent was made at ' + most_recent_commit.timestamp + ': '+ most_recent_commit.url);
+		// }
 
 		// Are we deploying? Has that option been enabled and does the commit have the appropriate message?
 		if (config.s3.enabled && deploy_status){
@@ -170,7 +171,7 @@ hookshot(function(info){
 
 				// Does the committer have deploy? privileges?
 				if (committer_approved) {
-					deployToS3(deploy_status, info, most_recent_commit.message);
+					deployToS3(deploy_status, info, most_recent_commit);
 				} else {
 					console.log('Unapproved committer attempted deployment.'.red)
 				}
