@@ -82,6 +82,7 @@ function pullLatest(info){
 	sh.run(checkout_master);
 }
 function checkForDeployMsg(last_commit){
+	console.log('Checking if deploy message in...'.yellow, ast_commit.message);
 	var commit_trigger = last_commit.message.split('::')[1], // 'bucket_environment::trigger::local_path::remote_path' -> "trigger"
 	    cp_deploy_regx   = new RegExp(config.s3.hard_deploy.trigger),
 	    sync_deploy_regx = new RegExp(config.s3.sync_deploy_trigger);
@@ -116,6 +117,7 @@ hookshot(function(info){
 	if (info.commits.length) {
 		most_recent_commit  = info.commits[info.commits.length - 1];
 		deploy_status       = checkForDeployMsg(most_recent_commit);
+		console.log('Deploy status is'.cyan, deploy_status);
 	}
 	// Is this coming from the whitelisted GitHub account?
 	if (is_account_verified){
