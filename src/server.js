@@ -41,13 +41,14 @@ function sendEmail(most_recent_commit, msg){
 			committer_name  = committer.name;
 
 	email_options.to = committer_email;
-	email_options.html = 'Hi '+ committer_name+',\n\n' + msg + '\n\n\n'+'Talk to you later,\n\nKestrel Songs';
+	email_options.html = 'Hi '+ committer_name+',<br/><br/>' + msg + '<br/><br/><br/>'+'Talk to you later,<br/><br/>Kestrel Songs';
+	email_options.html = email_options.html.replace(/\n/g, '<br/>');
 	email_options.text = 'Hi '+ committer_name+',\n\n' + msg + '\n\n\n'+'Talk to you later,\n\nKestrel Songs';
 	email_transporter.sendMail(email_options, function(error, info){
 		if(error){
 			console.log('Error in email sending'.red, error);
 		}else{
-			console.log('Email success! To '.green + committer_name + ' <' + committer_email + '>');
+			console.log('Email success! To: '.green + committer_name + ' <' + committer_email + '>');
 		}
 	});
 }
