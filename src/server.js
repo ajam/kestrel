@@ -41,12 +41,13 @@ function sendEmail(most_recent_commit, msg){
 			committer_name  = committer.name;
 
 	email_options.to = committer_email;
+	email_options.html = 'Hi '+ committer_name+',\n\n' + msg + '\n\n\n'+'Talk to you later,\n\nKestrel Songs';
 	email_options.text = 'Hi '+ committer_name+',\n\n' + msg + '\n\n\n'+'Talk to you later,\n\nKestrel Songs';
 	email_transporter.sendMail(email_options, function(error, info){
 		if(error){
 			console.log('Error in email sending'.red, error);
 		}else{
-			console.log('Email success to '.green + committer_name + '<' + committer_email + '>' +'!');
+			console.log('Email success! To '.green + committer_name + ' <' + committer_email + '>');
 		}
 	});
 }
@@ -138,7 +139,12 @@ function deployToS3(deploy_type, info, most_recent_commit){
 			commit_parts = last_commit_msg.split('::'), // 'bucket_environment::trigger::local_path::remote_path' -> [bucket_environment, trigger, local_path, remote_path], e.g. `staging::sync-flamingo::kestrel-test::2014/kestrel-cli` 
 			bucket_environment  = commit_parts[0], // Either `prod` or `staging`
 			local_path  = commit_parts[2], // Either `repo_name` or `repo_name/sub-directory`
-	    remote_path = commit_parts[3] // The folder we'll be writing into. An enclosing folder and the repo name plus any sub-directory, e.g. `2014/kestrel-test` or `2014/kestrel-test/output`
+	    remote_path = commit_parts[3], // The folder we'll be writing into. An enclosing folder and the repo name plus any sub-directory, e.g. `2014/kestrel-test` or `2014/kestrel-test/output`
+	    s = 's',
+
+	if (info.commits.length == 1){
+		s = '';
+	}
 
 	var deploy_statement = sh_commands.deploy(deploy_type, config.s3.buckets[bucket_environment], local_path, remote_path, config.s3.exclude);
 	console.log('Attempting to deploy with'.yellow, deploy_statement);
@@ -146,7 +152,7 @@ function deployToS3(deploy_type, info, most_recent_commit){
 		// Log deployment result
 		console.log('Deployed!'.green, stdout);
 		if (config.email.enabled) {
-			sendEmail(most_recent_commit, 'I just performed a <strong>'+deploy_type+'</strong> to S3 <strong>*'+bucket_environment+'*</strong> containing '+ info.commits.length + 'commits.\n\nFrom the local folder of `' + local_path + '`\n\nTo the S3 folder `' + remote_path + '`\n\n\nHere\'s some more output:\n'+stdout);
+			sendEmail(most_recent_commit, 'I just performed a <strong>'+deploy_type+'</strong> to S3 <strong>*'+bucket_environment+'*</strong> containing '+ info.commits.length + ' commit'+s+'.\n\nFrom the local folder of `' + local_path + '`\n\nTo the S3 folder `' + remote_path + '`\n\n\nHere\'s some more output:\n'+stdout);
 		}
 	});
 }
