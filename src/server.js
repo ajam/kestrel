@@ -13,17 +13,19 @@ var config      = require('../config.json'),
 		email_transporter,
 		email_options;
 
+var xoauth2_generator = require('xoauth2').createXOAuth2Generator({
+	user: config.email.address,
+	clientId: config.email.clientId,
+	clientSecret: config.email.clientSecret,
+	refreshToken: config.email.refreshToken
+});
+
 if (config.email.enabled){
 	// Create reusable transporter object using SMTP transport
 	email_transporter = nodemailer.createTransport({
 			service: config.email.service,
 			auth: {
-				XOAuth2: {
-					user: config.email.address,
-					clientId: config.email.clientId,
-					clientSecret: config.email.clientSecret,
-					refreshToken: config.email.refreshToken
-				}
+				xoauth2: xoauth2_generator
 			}
 		});
 
