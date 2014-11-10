@@ -151,9 +151,10 @@ function deployToS3(deploy_type, info, most_recent_commit){
 	console.log('Attempting to deploy with'.yellow, deploy_statement);
 	exec(deploy_statement, function(error, stdout){
 		// Log deployment result
-		console.log('Deployed!'.green, stdout);
+		console.log('Deployed!'.green)
+		console.log(stdout);
 		if (config.email.enabled) {
-			sendEmail(most_recent_commit, 'I just performed a <strong>'+deploy_type+'</strong> deploy to S3 <strong>*'+bucket_environment+'*</strong> containing '+ info.commits.length + ' commit'+s+':\n\n'+info.commits.map(function(commit){ return commit.url; }).join('\n')+'\n\nI put the the local folder of `' + local_path + '`\n\nOnto S3 as `' + remote_path + '`\n\n\nHere\'s some more output:\n'+stdout);
+			sendEmail(most_recent_commit, 'I just performed a <strong>'+deploy_type+'</strong> deploy to S3 <strong>*'+bucket_environment+'*</strong> containing '+ info.commits.length + ' commit'+s+':\n\n'+info.commits.map(function(commit){ return commit.url; }).join('\n')+'\n\nI put the the local folder of `' + local_path + '`\n\nOnto S3 as `' + remote_path + '`\n\n\nHere\'s some more output:\n'+stdout.replace(/remaining/g,'remaining\n'));
 		}
 	});
 }
