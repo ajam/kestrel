@@ -43,7 +43,7 @@ function sendEmail(most_recent_commit, msg){
 	email_options.to = committer_email;
 	email_options.html = 'Hi '+ committer_name+',<br/><br/>' + msg + '<br/><br/><br/>'+'Talk to you later,<br/><br/>Kestrel Songs';
 	email_options.html = email_options.html.replace(/\n/g, '<br/>');
-	email_options.text = 'Hi '+ committer_name+',\n\n' + msg + '\n\n\n'+'Talk to you later,\n\nKestrel Songs';
+	email_options.text = 'Hi '+ committer_name+',\n\n' + msg + '\n\n\n'+'Talk to you later,\n\nKestrel Songs ('+new Date().toISOString()+')';
 	email_transporter.sendMail(email_options, function(error, info){
 		if(error){
 			console.log('Error in email sending'.red, error);
@@ -153,7 +153,7 @@ function deployToS3(deploy_type, info, most_recent_commit){
 		// Log deployment result
 		console.log('Deployed!'.green, stdout);
 		if (config.email.enabled) {
-			sendEmail(most_recent_commit, 'I just performed a <strong>'+deploy_type+'</strong> to S3 <strong>*'+bucket_environment+'*</strong> containing '+ info.commits.length + ' commit'+s+'.\n\nFrom the local folder of `' + local_path + '`\n\nTo the S3 folder `' + remote_path + '`\n\n\nHere\'s some more output:\n'+stdout);
+			sendEmail(most_recent_commit, 'I just performed a <strong>'+deploy_type+'</strong> deploy to S3 <strong>*'+bucket_environment+'*</strong> containing '+ info.commits.length + ' commit'+s+':\n\n'+info.commits.map(function(commit){ return commit.url; }).join('\n')+'\n\nI put the the local folder of `' + local_path + '`\n\nOnto S3 as `' + remote_path + '`\n\n\nHere\'s some more output:\n'+stdout);
 		}
 	});
 }
