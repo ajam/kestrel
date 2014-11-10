@@ -48,7 +48,7 @@ function sendEmail(most_recent_commit, msg){
 	email_options.html = html_text.replace(/\n/g, '<br/>');
 
 	text_text = 'Hi '+ committer_name+',\n\n' + msg + '\n\n\n'+'Talk to you later,\n\nKestrel Songs ('+new Date().toISOString()+')';
-	email_options.html = text_text.replace(/<(\/?)strong>/g, '*');
+	email_options.text = text_text.replace(/<(\/?)strong>/g, '*');
 
 	email_options.to = committer_email;
 	email_transporter.sendMail(email_options, function(error, info){
