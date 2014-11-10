@@ -160,10 +160,10 @@ function deployToS3(deploy_type, info, most_recent_commit){
 		// Log deployment result
 		console.log('Deployed!'.green)
 		console.log(stdout);
-		var commit_urls;
+		var commit_messages_and_urls;
 		if (config.email.enabled) {
-			commit_urls = info.commits.map(function(cmt){ return cmt.url; }).join('\n');
-			sendEmail(most_recent_commit, 'I just performed a <strong>'+deploy_type+'</strong> deploy to S3 <strong>*'+bucket_environment+'*</strong> containing '+ info.commits.length + ' commit'+s+':\n\n'+commit_urls+'\n\nI put the the local folder of <strong>`' + local_path + '`</strong>\nonto S3 as <strong>`' + remote_path + '`</strong>\n\n\nHere\'s some more output:\n'+stdout.replace(/remaining/g,'remaining\n'));
+			commit_messages_and_urls = info.commits.map(function(cmt){ return cmt.url + ' ' + cmt.message; }).join('\n');
+			sendEmail(most_recent_commit, 'I just performed a <strong>'+deploy_type+'</strong> deploy to S3 <strong>*'+bucket_environment+'*</strong> containing '+ info.commits.length + ' commit'+s+':\n\n'+commit_messages_and_urls+'\n\nI put the the local folder of <strong>`' + local_path + '`</strong>\nonto S3 as <strong>`' + remote_path + '`</strong>\n\n\nHere\'s some more output:\n'+stdout.replace(/remaining/g,'remaining\n'));
 		}
 	});
 }
