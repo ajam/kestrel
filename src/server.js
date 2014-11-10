@@ -29,7 +29,7 @@ if (config.email.enabled){
 	};
 }
 
-function sendEmail(mostRecentCommit, msg){
+function sendEmail(most_recent_commit, msg){
 	var committer = most_recent_commit.committer
 	var committer_email = committer.email,
 			committer_name  = committer.name;
