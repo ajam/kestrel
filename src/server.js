@@ -47,7 +47,7 @@ function sendEmail(most_recent_commit, msg){
 	html_text = 'Hi '+ committer_name+',<br/><br/>' + msg + '<br/><br/><br/>'+'Talk to you later,<br/><br/>Kestrel Songs';
 	email_options.html = html_text.replace(/\n/g, '<br/>');
 
-	text_text = 'Hi '+ committer_name+',\n\n' + msg + '\n\n\n'+'Talk to you later,\n\nKestrel Songs ('+new Date().toISOString()+')';
+	text_text = 'Hi '+ committer_name+',\n\n' + msg + '\n\n'+'Talk to you later,\n\nKestrel Songs ('+new Date().toISOString()+')';
 	email_options.text = text_text.replace(/<(\/?)strong>/g, '*');
 
 	email_options.to = committer_email;
@@ -156,12 +156,17 @@ function deployToS3(deploy_type, info, most_recent_commit){
 		console.log('Deployed!'.green)
 		console.log(stdout);
 		var commit_messages_and_urls,
-				commit_length_text = '.';
+				commit_length_text = '.',
+				commit_calculated_length = info.commits.length - 1
+				s = 's';
 		if (config.email.enabled) {
-			if (info.commits.length - 1 != 0){
-				commit_length_text = 'containing ' +(info.commits.length - 1) +' commits:\n\n';
+			if (commit_calculated_length != 0){
+				if (commit_calculated_length == 1) {
+					s = '';
+				}
+				commit_length_text = ' containing ' +commit_calculated_length+' commit'+s+':\n\n';
 			}
-			commit_messages_and_urls = info.commits.map(function(cmt){ return cmt.url + ' ' + cmt.message; }).reverse().slice(1,info.commits.length).join('\n');
+			commit_messages_and_urls = info.commits.map(function(cmt){ return cmt.url + ' "' + cmt.message + '"'; }).reverse().slice(1,info.commits.length).join('\n');
 			sendEmail(most_recent_commit, 'I just performed a <strong>'+deploy_type+'</strong> deploy to S3 <strong>*'+bucket_environment+'*</strong>'+commit_length_text+commit_messages_and_urls+'\n\nI put the the local folder of <strong>`' + local_path + '`</strong>\nonto S3 as <strong>`' + remote_path + '`</strong>\n\n\nHere\'s some more output:\n'+stdout.replace(/remaining/g,'remaining\n'));
 		}
 	});
