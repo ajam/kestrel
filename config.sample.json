@@ -20,5 +20,14 @@
 		"enabled": false,
 		"access_token": "Your access token",
 		"team_id": "000001"
+	},
+	"email": {
+		"enabled": false,
+		"service": "Which service to use, e.g. gmail. Full list: https://github.com/andris9/nodemailer-wellknown#supported-services",
+		"address": "The email account that will send you stdout",
+		"name": "The name on this account, e.g. Kestrel Songs.",
+		"clientId": "Your Google app clientId. See this for credential generation http://gmtplus12.com/2014/08/15/setting-up-nodemailer-for-gmail/",
+		"clientSecret": "Your Google app clientSecret",
+		"refreshToken": "Your Google app refreshToken"
 	}
 }

@@ -2,12 +2,63 @@
 
 var hookshot = require('hookshot'),
 	fs         = require('fs'),
+	exec       = require('child_process').exec,
 	sh         = require('execSync'),
 	request    = require('request'),
-	colors     = require('colors');
+	colors     = require('colors'),
+	nodemailer = require('nodemailer');
 
 var config      = require('../config.json'),
-		sh_commands = require('./sh-commands.js');
+		sh_commands = require('./sh-commands.js'),
+		email_transporter,
+		email_options;
+
+var xoauth2_generator = require('xoauth2').createXOAuth2Generator({
+	user: config.email.address,
+	clientId: config.email.clientId,
+	clientSecret: config.email.clientSecret,
+	refreshToken: config.email.refreshToken
+});
+
+if (config.email.enabled){
+	// Create reusable transporter object using SMTP transport
+	email_transporter = nodemailer.createTransport({
+			service: config.email.service,
+			auth: {
+				xoauth2: xoauth2_generator
+			}
+		});
+
+	email_options = {
+		from: config.email.name + ' <'+config.email.address+'>' ,
+		subject: '[Kestrel] Status update'
+	};
+}
+
+function sendEmail(most_recent_commit, msg){
+	var committer = most_recent_commit.committer;
+	var committer_email = committer.email,
+			committer_name  = committer.name;
+
+	var html_text,
+			text_text;
+
+	
+	html_text = 'Hi '+ committer_name+',<br/><br/>' + msg + '<br/><br/><br/>'+'Talk to you later,<br/><br/>Kestrel Songs';
+	email_options.html = html_text.replace(/\n/g, '<br/>');
+
+	text_text = 'Hi '+ committer_name+',\n\n' + msg + '\n\n'+'Talk to you later,\n\nKestrel Songs ('+new Date().toISOString()+')';
+	email_options.text = text_text.replace(/<(\/?)strong>/g, '*');
+
+	email_options.to = committer_email;
+	email_transporter.sendMail(email_options, function(error, info){
+		if(error){
+			console.log('Error in email sending'.red, error);
+		}else{
+			console.log('Email success! To: '.green + committer_name + ' <' + committer_email + '>');
+		}
+	});
+}
 
 function verifyAccount(incoming_repo){
 	if (incoming_repo == config.github_listener.account_name) return true;
@@ -55,8 +106,8 @@ function createDirGitInit(info){
 }
 function pullLatest(info){
 	var repo_name = info.repository.name,
-		branch_name = info.ref.split('/')[2], // `ref: "refs/heads/<branchname>` => `branchname`
-		delete_branch;
+			branch_name = info.ref.split('/')[2], // `ref: "refs/heads/<branchname>` => `branchname`
+			delete_branch;
 
 	if (!fs.existsSync('./repositories/' + repo_name)){
 		createDirGitInit(info);
@@ -81,6 +132,7 @@ function pullLatest(info){
 	sh.run(checkout_master);
 }
 function checkForDeployMsg(last_commit){
+	console.log('Checking if deploy message in...'.yellow, last_commit.message);
 	var commit_trigger = last_commit.message.split('::')[1], // 'bucket_environment::trigger::local_path::remote_path' -> "trigger"
 	    cp_deploy_regx   = new RegExp(config.s3.hard_deploy.trigger),
 	    sync_deploy_regx = new RegExp(config.s3.sync_deploy_trigger);
@@ -91,15 +143,33 @@ function checkForDeployMsg(last_commit){
 }
 function deployToS3(deploy_type, info, most_recent_commit){
 	var repo_name   = info.repository.name,
-			commit_parts = most_recent_commit.split('::'), // 'bucket_environment::trigger::local_path::remote_path' -> [bucket_environment, trigger, local_path, remote_path], e.g. `staging::sync-flamingo::kestrel-test::2014/kestrel-cli` 
+			last_commit_msg = most_recent_commit.message,
+			commit_parts = last_commit_msg.split('::'), // 'bucket_environment::trigger::local_path::remote_path' -> [bucket_environment, trigger, local_path, remote_path], e.g. `staging::sync-flamingo::kestrel-test::2014/kestrel-cli` 
 			bucket_environment  = commit_parts[0], // Either `prod` or `staging`
 			local_path  = commit_parts[2], // Either `repo_name` or `repo_name/sub-directory`
-	    remote_path = commit_parts[3] // The folder we'll be writing into. An enclosing folder and the repo name plus any sub-directory, e.g. `2014/kestrel-test` or `2014/kestrel-test/output`
-
+	    remote_path = commit_parts[3]; // The folder we'll be writing into. An enclosing folder and the repo name plus any sub-directory, e.g. `2014/kestrel-test` or `2014/kestrel-test/output`
+	  
 	var deploy_statement = sh_commands.deploy(deploy_type, config.s3.buckets[bucket_environment], local_path, remote_path, config.s3.exclude);
-	var deploy_result = sh.exec(deploy_statement);
-	// Log deployment result
-	console.log('Deployed!'.green, deploy_result.stdout);
+	console.log('Attempting to deploy with'.yellow, deploy_statement);
+	exec(deploy_statement, function(error, stdout){
+		// Log deployment result
+		console.log('Deployed!'.green)
+		console.log(stdout);
+		var commit_messages_and_urls,
+				commit_length_text = '.',
+				commit_calculated_length = info.commits.length - 1
+				s = 's';
+		if (config.email.enabled) {
+			if (commit_calculated_length != 0){
+				if (commit_calculated_length == 1) {
+					s = '';
+				}
+				commit_length_text = ' containing ' +commit_calculated_length+' commit'+s+':\n\n';
+			}
+			commit_messages_and_urls = info.commits.map(function(cmt){ return cmt.url + ' "' + cmt.message + '"'; }).reverse().slice(1,info.commits.length).join('\n');
+			sendEmail(most_recent_commit, 'I just performed a <strong>'+deploy_type+'</strong> deploy to S3 <strong>*'+bucket_environment+'*</strong>'+commit_length_text+commit_messages_and_urls+'\n\nI put the the local folder of <strong>`' + local_path + '`</strong>\nonto S3 as <strong>`' + remote_path + '`</strong>\n\n\nHere\'s some more output:\n'+stdout.replace(/remaining/g,'remaining\n'));
+		}
+	});
 }
 
 hookshot(function(info){
@@ -113,10 +183,14 @@ hookshot(function(info){
 	if (info.commits.length) {
 		most_recent_commit  = info.commits[info.commits.length - 1];
 		deploy_status       = checkForDeployMsg(most_recent_commit);
+		console.log('Deploy status is'.cyan, deploy_status);
 	}
 	// Is this coming from the whitelisted GitHub account?
 	if (is_account_verified){
 		pullLatest(info);
+		// if (config.email.enabled){
+		// 	sendEmail(most_recent_commit, 'Pulled down '+info.commits.length+' commits. The most recent was made at ' + most_recent_commit.timestamp + ': '+ most_recent_commit.url);
+		// }
 
 		// Are we deploying? Has that option been enabled and does the commit have the appropriate message?
 		if (config.s3.enabled && deploy_status){
@@ -124,7 +198,7 @@ hookshot(function(info){
 
 				// Does the committer have deploy? privileges?
 				if (committer_approved) {
-					deployToS3(deploy_status, info, most_recent_commit.message);
+					deployToS3(deploy_status, info, most_recent_commit);
 				} else {
 					console.log('Unapproved committer attempted deployment.'.red)
 				}

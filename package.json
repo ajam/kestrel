@@ -1,6 +1,6 @@
 {
   "name": "kestrel-server",
-  "version": "0.2.0",
+  "version": "0.2.2",
   "description": "A hook to listen to GitHub and swoop files off to S3. Cli: http://github.com/mhkeller/kestrel-cli",
   "main": "src/server.js",
   "scripts": {
@@ -13,10 +13,12 @@
   "author": "Michael Keller",
   "license": "MIT",
   "dependencies": {
-    "hookshot": "0.0.2",
+    "colors": "~0.6.2",
     "execSync": "^1.0.1-pre",
+    "hookshot": "0.1.0",
+    "nodemailer": "^1.3.0",
     "request": "~2.34.0",
-    "colors": "~0.6.2"
+    "xoauth2": "^1.0.0"
   },
   "bugs": {
     "url": "https://github.com/mhkeller/kestrel/issues"
