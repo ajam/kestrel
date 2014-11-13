@@ -6,7 +6,8 @@ var hookshot = require('hookshot'),
 	sh         = require('execSync'),
 	request    = require('request'),
 	colors     = require('colors'),
-	nodemailer = require('nodemailer');
+	nodemailer = require('nodemailer'),
+	CronJob 	 = require('cron').CronJob;
 
 var config      = require('../config.json'),
 		sh_commands = require('./sh-commands.js'),
@@ -141,16 +142,11 @@ function checkForDeployMsg(last_commit){
 	if (sync_deploy_regx.exec(commit_trigger)) return 'sync';
 	return false;
 }
-function deployToS3(deploy_type, info, most_recent_commit){
-	var repo_name   = info.repository.name,
-			last_commit_msg = most_recent_commit.message,
-			commit_parts = last_commit_msg.split('::'), // 'bucket_environment::trigger::local_path::remote_path' -> [bucket_environment, trigger, local_path, remote_path], e.g. `staging::sync-flamingo::kestrel-test::2014/kestrel-cli` 
-			bucket_environment  = commit_parts[0], // Either `prod` or `staging`
-			local_path  = commit_parts[2], // Either `repo_name` or `repo_name/sub-directory`
-	    remote_path = commit_parts[3]; // The folder we'll be writing into. An enclosing folder and the repo name plus any sub-directory, e.g. `2014/kestrel-test` or `2014/kestrel-test/output`
-	  
-	var deploy_statement = sh_commands.deploy(deploy_type, config.s3.buckets[bucket_environment], local_path, remote_path, config.s3.exclude);
-	console.log('Attempting to deploy with'.yellow, deploy_statement);
+
+function deployToS3(){
+	var info = this.info,
+			deploy_statement = this.deploy_statement;
+	console.log('Attempting to deploy with'.yellow, deployStatement);
 	exec(deploy_statement, function(error, stdout){
 		// Log deployment result
 		console.log('Deployed!'.green)
@@ -170,6 +166,35 @@ function deployToS3(deploy_type, info, most_recent_commit){
 			sendEmail(most_recent_commit, 'I just performed a <strong>'+deploy_type+'</strong> deploy to S3 <strong>*'+bucket_environment+'*</strong>'+commit_length_text+commit_messages_and_urls+'\n\nI put the the local folder of <strong>`' + local_path + '`</strong>\nonto S3 as <strong>`' + remote_path + '`</strong>\n\n\nHere\'s some more output:\n'+stdout.replace(/remaining/g,'remaining\n'));
 		}
 	});
+	
+}
+function prepS3Deploy(deploy_type, info, most_recent_commit){
+	var repo_name   = info.repository.name,
+			last_commit_msg = most_recent_commit.message,
+			commit_parts = last_commit_msg.split('::'), // 'bucket_environment::trigger::local_path::remote_path' -> [bucket_environment, trigger, local_path, remote_path], e.g. `staging::sync-flamingo::kestrel-test::2014/kestrel-cli` 
+			bucket_environment  = commit_parts[0], // Either `prod` or `staging`
+			local_path  = commit_parts[2], // Either `repo_name` or `repo_name/sub-directory`
+	    remote_path = commit_parts[3], // The folder we'll be writing into. An enclosing folder and the repo name plus any sub-directory, e.g. `2014/kestrel-test` or `2014/kestrel-test/output`
+			when = commit_parts[4],
+			job;
+
+	var deploy_statement = sh_commands.deploy(deploy_type, config.s3.buckets[bucket_environment], local_path, remote_path, config.s3.exclude);
+	var context = {
+		info: info,
+		deploy_statement: deploy_statement
+	};
+	if (when == 'now'){
+		deployToS3.call(context);
+	} else {
+		job = new CronJob({
+			cronTime: new Date(when),
+			onTick: deployToS3,
+			start: true,
+			timeZone: config.timezone,
+			context: context
+		});
+	}
+
 }
 
 hookshot(function(info){
@@ -198,7 +223,7 @@ hookshot(function(info){
 
 				// Does the committer have deploy? privileges?
 				if (committer_approved) {
-					deployToS3(deploy_status, info, most_recent_commit);
+					prepS3Deploy(deploy_status, info, most_recent_commit);
 				} else {
 					console.log('Unapproved committer attempted deployment.'.red)
 				}

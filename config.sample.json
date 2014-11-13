@@ -29,5 +29,6 @@
 		"clientId": "Your Google app clientId. See this for credential generation http://gmtplus12.com/2014/08/15/setting-up-nodemailer-for-gmail/",
 		"clientSecret": "Your Google app clientSecret",
 		"refreshToken": "Your Google app refreshToken"
-	}
+	},
+	"timezone": "US/Eastern"
 }
