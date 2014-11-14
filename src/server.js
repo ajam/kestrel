@@ -146,7 +146,7 @@ function checkForDeployMsg(last_commit){
 function deployToS3(){
 	var info = this.info,
 			deploy_statement = this.deploy_statement;
-	console.log('Attempting to deploy with'.yellow, deployStatement);
+	console.log('Attempting to deploy with'.yellow, deploy_statement);
 	exec(deploy_statement, function(error, stdout){
 		// Log deployment result
 		console.log('Deployed!'.green)
