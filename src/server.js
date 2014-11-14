@@ -7,7 +7,8 @@ var hookshot = require('hookshot'),
 	request    = require('request'),
 	colors     = require('colors'),
 	nodemailer = require('nodemailer'),
-	CronJob 	 = require('cron').CronJob;
+	CronJob 	 = require('cron').CronJob,
+	time 			 = require('time');
 
 var config      = require('../config.json'),
 		sh_commands = require('./sh-commands.js'),
@@ -42,13 +43,15 @@ function sendEmail(most_recent_commit, msg){
 			committer_name  = committer.name;
 
 	var html_text,
-			text_text;
+			text_text,
+			now = new time.Date(),
+			here_and_now = now.setTimezone(config.timezone).toString();
 
-	
-	html_text = 'Hi '+ committer_name+',<br/><br/>' + msg + '<br/><br/><br/>'+'Talk to you later,<br/><br/>Kestrel Songs';
+	// This part could be made more DRY
+	html_text = 'Hi '+ committer_name+',<br/><br/>' + msg + '<br/><br/><br/>'+'Talk to you later,<br/><br/>Kestrel Songs ('+now+')';
 	email_options.html = html_text.replace(/\n/g, '<br/>');
 
-	text_text = 'Hi '+ committer_name+',\n\n' + msg + '\n\n'+'Talk to you later,\n\nKestrel Songs ('+new Date().toISOString()+')';
+	text_text = 'Hi '+ committer_name+',\n\n' + msg + '\n\n'+'Talk to you later,\n\nKestrel Songs ('+now+')';
 	email_options.text = text_text.replace(/<(\/?)strong>/g, '*');
 
 	email_options.to = committer_email;
