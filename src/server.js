@@ -146,7 +146,11 @@ function checkForDeployMsg(last_commit){
 function deployToS3(){
 	var info = this.info,
 			most_recent_commit = this.most_recent_commit,
-			deploy_statement = this.deploy_statement;
+			deploy_statement = this.deploy_statement,
+			deploy_type = this.deploy_type,
+			bucket_environment = this.bucket_environment,
+			local_path = this.local_path,
+			remote_path = this.remote_path;
 	console.log('Attempting to deploy with'.yellow, deploy_statement);
 	exec(deploy_statement, function(error, stdout){
 		// Log deployment result
