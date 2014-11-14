@@ -233,7 +233,7 @@ function deployToS3(){
 function prepS3Deploy(deploy_type, info, most_recent_commit){
 	var repo_name   = info.repository.name,
 			last_commit_msg = most_recent_commit.message,
-			commit_parts = last_commit_msg.split('::'), // 'bucket_environment::trigger::local_path::remote_path' -> [bucket_environment, trigger, local_path, remote_path], e.g. `staging::sync-flamingo::kestrel-test::2014/kestrel-cli` 
+			commit_parts = last_commit_msg.split('::'), // 'bucket_environment::trigger::local_path::remote_path::when' -> [bucket_environment, trigger, local_path, remote_path], e.g. `staging::sync-flamingo::kestrel-test::2014/kestrel-cli:2014-11-11T14:02` 
 			bucket_environment  = commit_parts[0], // Either `prod` or `staging`
 			local_path  = commit_parts[2], // Either `repo_name` or `repo_name/sub-directory`
 	    remote_path = commit_parts[3], // The folder we'll be writing into. An enclosing folder and the repo name plus any sub-directory, e.g. `2014/kestrel-test` or `2014/kestrel-test/output`
