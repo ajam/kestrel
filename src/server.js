@@ -37,31 +37,102 @@ if (config.email.enabled){
 	};
 }
 
-function sendEmail(most_recent_commit, msg){
-	var committer = most_recent_commit.committer;
-	var committer_email = committer.email,
-			committer_name  = committer.name;
+function sendEmail(context, mode, most_recent_commit, stdout){
+	var committer,
+			committer_email,
+			committer_name,
+			body_text,
+			now,
+			here_and_now, // A timezone'd version of `now`.
+			msg,
+			commit_messages_and_urls,
+			commit_length_text,
+			commit_calculated_length,
+			s,
+			mode_verb,
+			info,
+			most_recent_commit,
+			deploy_statement,
+			deploy_type,
+			bucket_environment,
+			local_path,
+			remote_path,
+			when_msg = '',
+			s3_output = '';
 
-	var html_text,
-			text_text,
-			now = new time.Date(),
-			here_and_now = now.setTimezone(config.timezone).toString();
-
-	// This part could be made more DRY
-	html_text = 'Hi '+ committer_name+',<br/><br/>' + msg + '<br/><br/><br/>'+'Talk to you later,<br/><br/>Kestrel Songs ('+now+')';
-	email_options.html = html_text.replace(/\n/g, '<br/>');
-
-	text_text = 'Hi '+ committer_name+',\n\n' + msg + '\n\n'+'Talk to you later,\n\nKestrel Songs ('+now+')';
-	email_options.text = text_text.replace(/<(\/?)strong>/g, '*');
-
-	email_options.to = committer_email;
-	email_transporter.sendMail(email_options, function(error, info){
-		if(error){
-			console.log('Error in email sending'.red, error);
-		}else{
-			console.log('Email success! To: '.green + committer_name + ' <' + committer_email + '>');
+	if (config.email.enabled) {
+		if (mode == 'deploy'){
+			mode_verb = 'performed';
+		} else if (mode == 'schedule') {
+			mode_verb = 'scheduled';
 		}
-	});
+
+		info = context.info;
+		most_recent_commit = context.most_recent_commit;
+		deploy_statement = context.deploy_statement;
+		deploy_type = context.deploy_type;
+		bucket_environment = context.bucket_environment;
+		local_path = context.local_path;
+		remote_path = context.remote_path;
+		when = context.when;
+
+		committer = most_recent_commit.committer;
+		committer_email = committer.email;
+		committer_name  = committer.name;
+
+		now = new time.Date();
+		here_and_now = now.setTimezone(config.timezone).toString();
+
+		commit_length_text = '.';
+		commit_calculated_length = info.commits.length - 1;
+		s = 's';
+
+		// Make a string saying how many commits we have, minus the staging commit
+		if (commit_calculated_length != 0){
+			// Make sure we get our plurals correct.
+			if (commit_calculated_length == 1) {
+				s = '';
+			}
+			commit_length_text = ' containing ' +commit_calculated_length+' commit'+s+':<br/><br/>';
+		}
+		// Concatenate a string of urls for each of these commits along with the commit message
+		// Reverse to put them in rever-cron order
+		commit_messages_and_urls = info.commits.map(function(cmt){ return cmt.url + ' "' + cmt.message + '"'; }).reverse().slice(1,info.commits.length).join('<br/>');
+
+		// In schedule mode there is no s3 output so it stays as an empty string
+		if (mode == 'deploy'){
+			s3_output = '<br/><br/><br/>';
+			if (!stdout.trim()){
+				s3_output += 'S3 said everything was already up-to-date! If you\'ve removed files from your project and want to have that deletion reflected on S3 (possible if you\'ve renamed files, for instance) try doing a hard deploy.';
+			} else {
+				s3_output += 'Here\'s what S3 is telling me it did:<br/>';
+				s3_output += stdout.replace(/remaining/g, 'remaining<br/>');
+			}
+		} else if (mode == 'schedule'){
+			when_msg = ' scheduled for <strong>' + when + '</strong>';
+		}
+
+		// What's the main body message look like?
+		msg = 'I just '+mode_verb+' a <strong>'+deploy_type+'</strong> deploy to S3 <strong>*'+bucket_environment+'*</strong>'+when_msg+commit_length_text+commit_messages_and_urls+'<br/><br/>I put the the local folder of <strong>`' + local_path + '`</strong><br/>onto S3 as <strong>`' + remote_path + '`</strong>'+s3_output;
+
+		// Assemble an html version
+		body_text = 'Hi '+ committer_name+',<br/><br/>' + msg + '<br/><br/><br/>'+'Talk to you later,<br/><br/>Kestrel Songs ('+here_and_now+')';
+		email_options.html = body_text;
+
+		// And a plain-text version
+		email_options.text = body_text.replace(/<br\/>/g, '\n')
+																	.replace(/<(\/?)strong>/g, '*');
+
+		// Fill out the rest of the information and send
+		email_options.to = committer_email;
+		email_transporter.sendMail(email_options, function(error, info){
+			if(error){
+				console.log('Error in email sending'.red, error);
+			}else{
+				console.log('Email success! To: '.green + committer_name + ' <' + committer_email + '>');
+			}
+		});
+	}
 }
 
 function verifyAccount(incoming_repo){
@@ -147,32 +218,15 @@ function checkForDeployMsg(last_commit){
 }
 
 function deployToS3(){
-	var info = this.info,
-			most_recent_commit = this.most_recent_commit,
-			deploy_statement = this.deploy_statement,
-			deploy_type = this.deploy_type,
-			bucket_environment = this.bucket_environment,
-			local_path = this.local_path,
-			remote_path = this.remote_path;
+	var that = this;
+	var deploy_statement = this.deploy_statement;
+
 	console.log('Attempting to deploy with'.yellow, deploy_statement);
 	exec(deploy_statement, function(error, stdout){
 		// Log deployment result
-		console.log('Deployed!'.green)
+		console.log('Deployed!'.green);
 		console.log(stdout);
-		var commit_messages_and_urls,
-				commit_length_text = '.',
-				commit_calculated_length = info.commits.length - 1,
-				s = 's';
-		if (config.email.enabled) {
-			if (commit_calculated_length != 0){
-				if (commit_calculated_length == 1) {
-					s = '';
-				}
-				commit_length_text = ' containing ' +commit_calculated_length+' commit'+s+':\n\n';
-			}
-			commit_messages_and_urls = info.commits.map(function(cmt){ return cmt.url + ' "' + cmt.message + '"'; }).reverse().slice(1,info.commits.length).join('\n');
-			sendEmail(most_recent_commit, 'I just performed a <strong>'+deploy_type+'</strong> deploy to S3 <strong>*'+bucket_environment+'*</strong>'+commit_length_text+commit_messages_and_urls+'\n\nI put the the local folder of <strong>`' + local_path + '`</strong>\nonto S3 as <strong>`' + remote_path + '`</strong>\n\n\nHere\'s some more output:\n'+stdout.replace(/remaining/g,'remaining\n'));
-		}
+		sendEmail(that, 'deploy', most_recent_commit, stdout);
 	});
 	
 }
@@ -196,7 +250,8 @@ function prepS3Deploy(deploy_type, info, most_recent_commit){
 		bucket_environment: bucket_environment,
 		local_path: local_path,
 		remote_path: remote_path,
-		deploy_statement: deploy_statement
+		deploy_statement: deploy_statement,
+		when: when
 	};
 	if (when == 'now'){
 		deployToS3.call(context);
@@ -208,6 +263,7 @@ function prepS3Deploy(deploy_type, info, most_recent_commit){
 			timeZone: config.timezone,
 			context: context
 		});
+		sendEmail(context, 'schedule', most_recent_commit);
 	}
 
 }
