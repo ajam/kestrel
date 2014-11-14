@@ -145,6 +145,7 @@ function checkForDeployMsg(last_commit){
 
 function deployToS3(){
 	var info = this.info,
+			most_recent_commit = this.most_recent_commit,
 			deploy_statement = this.deploy_statement;
 	console.log('Attempting to deploy with'.yellow, deploy_statement);
 	exec(deploy_statement, function(error, stdout){
@@ -153,7 +154,7 @@ function deployToS3(){
 		console.log(stdout);
 		var commit_messages_and_urls,
 				commit_length_text = '.',
-				commit_calculated_length = info.commits.length - 1
+				commit_calculated_length = info.commits.length - 1,
 				s = 's';
 		if (config.email.enabled) {
 			if (commit_calculated_length != 0){
@@ -179,8 +180,15 @@ function prepS3Deploy(deploy_type, info, most_recent_commit){
 			job;
 
 	var deploy_statement = sh_commands.deploy(deploy_type, config.s3.buckets[bucket_environment], local_path, remote_path, config.s3.exclude);
+	// These are the variables packaged up so they can be accessed by `deployToS3`
+	// We can't really pass them super easily since `CronJob` wants a function by reference
 	var context = {
 		info: info,
+		most_recent_commit: most_recent_commit,
+		deploy_type: deploy_type,
+		bucket_environment: bucket_environment,
+		local_path: local_path,
+		remote_path: remote_path,
 		deploy_statement: deploy_statement
 	};
 	if (when == 'now'){
