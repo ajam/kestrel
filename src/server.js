@@ -219,7 +219,8 @@ function checkForDeployMsg(last_commit){
 
 function deployToS3(){
 	var that = this;
-	var deploy_statement = this.deploy_statement;
+	var deploy_statement = this.deploy_statement,
+			most_recent_commit = this.most_recent_commit;
 
 	console.log('Deploying with:\n'.yellow, deploy_statement);
 	exec(deploy_statement, function(error, stdout){
