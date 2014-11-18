@@ -76,7 +76,7 @@ function sendEmail(context, mode, most_recent_commit, stdout){
 		bucket_environment = context.bucket_environment;
 		local_path = context.local_path;
 		remote_path = context.remote_path;
-		when = context.when;
+		when = context.when.replace('T', ' '); // Remove the `T` for pretty printing
 
 		committer = most_recent_commit.committer;
 		committer_email = committer.email;
