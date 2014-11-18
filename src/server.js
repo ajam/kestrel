@@ -116,7 +116,7 @@ function sendEmail(context, mode, most_recent_commit, stdout){
 		msg = 'I just '+mode_verb+' a <strong>'+deploy_type+'</strong> deploy to S3 <strong>*'+bucket_environment+'*</strong>'+when_msg+commit_length_text+commit_messages_and_urls+'<br/><br/>I put the the local folder of <strong>`' + local_path + '`</strong><br/>onto S3 as <strong>`' + remote_path + '`</strong>'+s3_output;
 
 		// Assemble an html version
-		body_text = 'Hi '+ committer_name+',<br/><br/>' + msg + '<br/><br/><br/>'+'Talk to you later,<br/><br/>Kestrel Songs ('+here_and_now+')';
+		body_text = 'Hi '+ committer_name+',<br/><br/>' + msg + '<br/><br/>'+'Talk to you later,<br/><br/>Kestrel Songs ('+here_and_now+')';
 		email_options.html = body_text;
 
 		// And a plain-text version
@@ -221,7 +221,7 @@ function deployToS3(){
 	var that = this;
 	var deploy_statement = this.deploy_statement;
 
-	console.log('Attempting to deploy with'.yellow, deploy_statement);
+	console.log('Deploying with:\n'.yellow, deploy_statement);
 	exec(deploy_statement, function(error, stdout){
 		// Log deployment result
 		console.log('Deployed!'.green);
