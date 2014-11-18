@@ -266,6 +266,7 @@ function prepS3Deploy(deploy_type, info, most_recent_commit){
 			timeZone: config.timezone,
 			context: context
 		});
+		console.log('Scheduling with:\n'.yellow, deploy_statement);
 		sendEmail(context, 'schedule', most_recent_commit);
 	}
 
