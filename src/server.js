@@ -58,13 +58,15 @@ function sendEmail(context, mode, most_recent_commit, stdout){
 			local_path,
 			remote_path,
 			when_msg = '',
-			s3_output = '';
+			s3_output = '',
+			tense = '';
 
 	if (config.email.enabled) {
 		if (mode == 'deploy'){
 			mode_verb = 'performed';
 		} else if (mode == 'schedule') {
 			mode_verb = 'scheduled';
+			tense = 'will ';
 		}
 
 		info = context.info;
@@ -109,11 +111,11 @@ function sendEmail(context, mode, most_recent_commit, stdout){
 				s3_output += stdout.replace(/remaining/g, 'remaining<br/>');
 			}
 		} else if (mode == 'schedule'){
-			when_msg = ' scheduled for <strong>' + when + '</strong>';
+			when_msg = ' for <strong>' + when + '</strong>';
 		}
 
 		// What's the main body message look like?
-		msg = 'I just '+mode_verb+' a <strong>'+deploy_type+'</strong> deploy to S3 <strong>*'+bucket_environment+'*</strong>'+when_msg+commit_length_text+commit_messages_and_urls+'<br/><br/>I put the the local folder of <strong>`' + local_path + '`</strong><br/>onto S3 as <strong>`' + remote_path + '`</strong>'+s3_output;
+		msg = 'I just '+mode_verb+' a <strong>'+deploy_type+'</strong> deploy to S3 <strong>*'+bucket_environment+'*</strong>'+when_msg+commit_length_text+commit_messages_and_urls+'<br/><br/>I '+tense+'put the the local folder of <strong>`' + local_path + '`</strong><br/>onto S3 as <strong>`' + remote_path + '`</strong>'+s3_output;
 
 		// Assemble an html version
 		body_text = 'Hi '+ committer_name+',<br/><br/>' + msg + '<br/><br/><br/>'+'Talk to you later,<br/><br/>Kestrel Songs<br/><br/>Sent at: '+here_and_now;
@@ -258,7 +260,7 @@ function prepS3Deploy(deploy_type, info, most_recent_commit){
 		deployToS3.call(context);
 	} else {
 		job = new CronJob({
-			cronTime: new Date(when),
+			cronTime: new time.Date(when, config.timezone),
 			onTick: deployToS3,
 			start: true,
 			timeZone: config.timezone,
