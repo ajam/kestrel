@@ -259,16 +259,20 @@ function prepS3Deploy(deploy_type, info, most_recent_commit){
 		when: when
 	};
 
+	var cron_id = bucket_environment+local_path;
+
 	// If we're scheduling or unscheduling, (in those cases, `when` is either `unschedule` or a date string)
 	// Clear any previous cron in that namespace
-	if (when != 'now' && jobs[local_path]){
-		jobs[local_path].stop();
+	if (when != 'now' && jobs[cron_id]){
+		jobs[cron_id].stop();
+		// Or maybe
+		// delete jobs[cron_id];
 	}
 	
 	if (when == 'now'){
 		deployToS3.call(context);
 	} else {
-		jobs[local_path] = new CronJob({
+		jobs[cron_id] = new CronJob({
 			cronTime: new time.Date(when, config.timezone),
 			onTick: deployToS3,
 			start: true,
