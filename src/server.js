@@ -22,6 +22,9 @@ var xoauth2_generator = require('xoauth2').createXOAuth2Generator({
 	refreshToken: config.email.refreshToken
 });
 
+// Where we're storing our cronjobs by repo name
+var jobs = {};
+
 if (config.email.enabled){
 	// Create reusable transporter object using SMTP transport
 	email_transporter = nodemailer.createTransport({
@@ -240,8 +243,7 @@ function prepS3Deploy(deploy_type, info, most_recent_commit){
 			bucket_environment  = commit_parts[0], // Either `prod` or `staging`
 			local_path  = commit_parts[2], // Either `repo_name` or `repo_name/sub-directory`
 	    remote_path = commit_parts[3], // The folder we'll be writing into. An enclosing folder and the repo name plus any sub-directory, e.g. `2014/kestrel-test` or `2014/kestrel-test/output`
-			when = commit_parts[4], // Date/time string in YYYY-MM-DDTHH:MM format
-			job;
+			when = commit_parts[4]; // Date/time string in YYYY-MM-DDTHH:MM format
 
 	var deploy_statement = sh_commands.deploy(deploy_type, config.s3.buckets[bucket_environment], local_path, remote_path, config.s3.exclude);
 	// These are the variables packaged up so they can be accessed by `deployToS3`
@@ -256,10 +258,17 @@ function prepS3Deploy(deploy_type, info, most_recent_commit){
 		deploy_statement: deploy_statement,
 		when: when
 	};
+
+	// If we're scheduling or unscheduling, (in those cases, `when` is either `unschedule` or a date string)
+	// Clear any previous cron in that namespace
+	if (when != 'now' && jobs[local_path]){
+		jobs[local_path].stop();
+	}
+	
 	if (when == 'now'){
 		deployToS3.call(context);
 	} else {
-		job = new CronJob({
+		jobs[local_path] = new CronJob({
 			cronTime: new time.Date(when, config.timezone),
 			onTick: deployToS3,
 			start: true,
