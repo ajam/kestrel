@@ -133,7 +133,9 @@ function sendEmail(context, mode, most_recent_commit, stdout, repo_name){
 			// Add the repo name
 			msg += ' for the project <strong>'+repo_name+'</strong>.';
 			// Get rid of the `a` since `deploys` is now plural
-			msg = msg.replace('I just unscheduled a', 'I just unscheduled');
+			// And change the bolding
+			msg = msg.replace('I just unscheduled a', 'I just <strong>unscheduled</strong>')
+								.replace('<strong>all</strong>', 'all');
 		}
 
 		// Assemble an html version
