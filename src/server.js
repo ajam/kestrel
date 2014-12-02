@@ -63,19 +63,22 @@ function sendEmail(context, mode, most_recent_commit, stdout, repo_name){
 			when_msg = '',
 			s3_output = '',
 			tense = '',
-			deploy_s = '';
+			deploy_s = '',
+			s3_verb = '';
 
 	if (config.email.enabled) {
 		if (mode == 'deploy'){
 			mode_verb = 'performed';
+			s3_verb = 'put';
 		} else if (mode == 'schedule') {
 			mode_verb = 'scheduled';
 			tense = 'will ';
+			s3_verb = 'put';
 		} else if (mode == 'unschedule') {
 			mode_verb = 'unscheduled';
 			tense = 'won\'t ';
-			local_path = repo_name;
 			deploy_s = 's';
+			s3_verb = 'touch'
 		}
 
 		info = context.info;
@@ -123,13 +126,14 @@ function sendEmail(context, mode, most_recent_commit, stdout, repo_name){
 			when_msg = ' for <strong>' + when + '</strong>';
 		} else if (mode == 'unschedule'){
 			deploy_type = 'all';
+			local_path = repo_name;
 		}
 
 		// What's the main body message look like?
-		msg = 'I just '+mode_verb+' a <strong>'+deploy_type+'</strong> deploy'+deploy_s+' to S3 <strong>*'+bucket_environment+'*</strong>'+when_msg+commit_length_text+commit_messages_and_urls+'<br/><br/>I '+tense+'put the the local folder of <strong>`' + local_path + '`</strong><br/>onto S3';
+		msg = 'I just '+mode_verb+' a <strong>'+deploy_type+'</strong> deploy'+deploy_s+' to S3 <strong>*'+bucket_environment+'*</strong>'+when_msg+commit_length_text+commit_messages_and_urls+'<br/><br/>I '+tense+s3_verb+' the local folder of <strong>`' + local_path + '`</strong>';
 
 		if (mode != 'unschedule'){
-			msg += ' as <strong>`' + remote_path + '`</strong>'+s3_output;
+			msg += '<br/>onto S3 as <strong>`' + remote_path + '`</strong>'+s3_output;
 		} else {
 			// Get rid of the `a` since `deploys` is now plural
 			msg = msg.replace('I just unscheduled a', 'I just unscheduled');
