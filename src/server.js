@@ -40,7 +40,7 @@ if (config.email.enabled){
 	};
 }
 
-function sendEmail(context, mode, most_recent_commit, stdout){
+function sendEmail(context, mode, most_recent_commit, stdout, repo_name){
 	var committer,
 			committer_email,
 			committer_name,
@@ -62,7 +62,8 @@ function sendEmail(context, mode, most_recent_commit, stdout){
 			remote_path,
 			when_msg = '',
 			s3_output = '',
-			tense = '';
+			tense = '',
+			deploy_s = '';
 
 	if (config.email.enabled) {
 		if (mode == 'deploy'){
@@ -70,6 +71,11 @@ function sendEmail(context, mode, most_recent_commit, stdout){
 		} else if (mode == 'schedule') {
 			mode_verb = 'scheduled';
 			tense = 'will ';
+		} else if (mode == 'unschedule') {
+			mode_verb = 'unscheduled';
+			tense = 'won\'t ';
+			local_path = repo_name;
+			deploy_s = 's';
 		}
 
 		info = context.info;
@@ -107,7 +113,7 @@ function sendEmail(context, mode, most_recent_commit, stdout){
 		// In schedule mode there is no s3 output so it stays as an empty string
 		if (mode == 'deploy'){
 			s3_output = '<br/><br/><br/>';
-			if (!stdout.trim()){
+			if (!stdout || !stdout.trim()){
 				s3_output += 'S3 said everything was already up-to-date! If you\'ve removed files from your project and want to have that deletion reflected on S3 (possible if you\'ve renamed files, for instance) try doing a hard deploy.';
 			} else {
 				s3_output += 'Here\'s what S3 is telling me it did:<br/>';
@@ -115,10 +121,19 @@ function sendEmail(context, mode, most_recent_commit, stdout){
 			}
 		} else if (mode == 'schedule'){
 			when_msg = ' for <strong>' + when + '</strong>';
+		} else if (mode == 'unschedule'){
+			deploy_type = 'all';
 		}
 
 		// What's the main body message look like?
-		msg = 'I just '+mode_verb+' a <strong>'+deploy_type+'</strong> deploy to S3 <strong>*'+bucket_environment+'*</strong>'+when_msg+commit_length_text+commit_messages_and_urls+'<br/><br/>I '+tense+'put the the local folder of <strong>`' + local_path + '`</strong><br/>onto S3 as <strong>`' + remote_path + '`</strong>'+s3_output;
+		msg = 'I just '+mode_verb+' a <strong>'+deploy_type+'</strong> deploy'+deploy_s+' to S3 <strong>*'+bucket_environment+'*</strong>'+when_msg+commit_length_text+commit_messages_and_urls+'<br/><br/>I '+tense+'put the the local folder of <strong>`' + local_path + '`</strong><br/>onto S3';
+
+		if (mode != 'unschedule'){
+			msg += ' as <strong>`' + remote_path + '`</strong>'+s3_output;
+		} else {
+			// Get rid of the `a` since `deploys` is now plural
+			msg = msg.replace('I just unscheduled a', 'I just unscheduled');
+		}
 
 		// Assemble an html version
 		body_text = 'Hi '+ committer_name+',<br/><br/>' + msg + '<br/><br/><br/>'+'Talk to you later,<br/><br/>Kestrel Songs<br/><br/>Sent at: '+here_and_now;
@@ -243,7 +258,7 @@ function prepS3Deploy(deploy_type, info, most_recent_commit){
 			bucket_environment  = commit_parts[0], // Either `prod` or `staging`
 			local_path  = commit_parts[2], // Either `repo_name` or `repo_name/sub-directory`
 	    remote_path = commit_parts[3], // The folder we'll be writing into. An enclosing folder and the repo name plus any sub-directory, e.g. `2014/kestrel-test` or `2014/kestrel-test/output`
-			when = commit_parts[4]; // Date/time string in YYYY-MM-DDTHH:MM format
+			when = commit_parts[4]; // Date/time string in YYYY-MM-DDTHH:MM format or `now` or `unschedule`
 
 	var deploy_statement = sh_commands.deploy(deploy_type, config.s3.buckets[bucket_environment], local_path, remote_path, config.s3.exclude);
 	// These are the variables packaged up so they can be accessed by `deployToS3`
@@ -259,18 +274,19 @@ function prepS3Deploy(deploy_type, info, most_recent_commit){
 		when: when
 	};
 
-	var cron_id = bucket_environment+local_path;
+	var cron_id = repo_name+bucket_environment;
 
 	// If we're scheduling or unscheduling, (in those cases, `when` is either `unschedule` or a date string)
 	// Clear any previous cron in that namespace
 	if (when != 'now' && jobs[cron_id]){
 		jobs[cron_id].stop();
-		// Or maybe
-		// delete jobs[cron_id];
 	}
 	
 	if (when == 'now'){
 		deployToS3.call(context);
+	} else if (when == 'unschedule'){
+		console.log('Unscheduling all deploys for'.yellow, repo_name);
+		sendEmail(context, 'unschedule', most_recent_commit, '', repo_name);
 	} else {
 		jobs[cron_id] = new CronJob({
 			cronTime: new time.Date(when, config.timezone),
@@ -286,6 +302,7 @@ function prepS3Deploy(deploy_type, info, most_recent_commit){
 }
 
 hookshot(function(info){
+	console.log('\n\n\n\n## Incoming push from'.cyan, info.repository.owner.name);
 	// Is this request coming from the specified GitHub Account?
 	var is_account_verified = verifyAccount(info.repository.owner.name);
 	// Is there a deploy message present?
