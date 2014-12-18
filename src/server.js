@@ -128,7 +128,7 @@ function sendEmail(context, mode, most_recent_commit, stdout, repo_name){
 		msg = 'I just '+mode_verb+' a <strong>'+deploy_type+'</strong> deploy'+deploy_s+' to S3 <strong>*'+bucket_environment+'*</strong>';
 
 		if (mode != 'unschedule'){
-			msg += when_msg+commit_length_text+commit_messages_and_urls+'<br/><br/>I '+tense+'put the local folder of <strong>`' + local_path + '`</strong>';'<br/>onto S3 as <strong>`' + remote_path + '`</strong>'+s3_output;
+			msg += when_msg+commit_length_text+commit_messages_and_urls+'<br/><br/>I '+tense+'put the local folder of <strong>`' + local_path + '`</strong><br/>onto S3 as <strong>`' + remote_path + '`</strong>'+s3_output;
 		} else {
 			// Add the repo name
 			msg += ' for the project <strong>'+repo_name+'</strong>.';
