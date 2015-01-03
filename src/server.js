@@ -63,7 +63,9 @@ function sendEmail(context, mode, most_recent_commit, stdout, repo_name){
 			when_msg = '',
 			s3_output = '',
 			tense = '',
-			deploy_s = '';
+			deploy_s = '',
+			songs_count,
+			song_index;
 
 	if (config.email.enabled) {
 		if (mode == 'deploy'){
@@ -96,6 +98,9 @@ function sendEmail(context, mode, most_recent_commit, stdout, repo_name){
 		commit_length_text = '.';
 		commit_calculated_length = info.commits.length - 1;
 		s = 's';
+
+		songs_count = config.songs.length;
+		song_index = Math.floor(Math.random()*songs_count);
 
 		// Make a string saying how many commits we have, minus the staging commit
 		if (commit_calculated_length != 0){
@@ -139,7 +144,7 @@ function sendEmail(context, mode, most_recent_commit, stdout, repo_name){
 		}
 
 		// Assemble an html version
-		body_text = 'Hi '+ committer_name+',<br/><br/>' + msg + '<br/><br/><br/>'+'Talk to you later,<br/><br/>Kestrel Songs<br/><br/>Sent at: '+here_and_now;
+		body_text = 'Hi '+ committer_name+',<br/><br/>' + msg + '<br/><br/><br/>'+'Talk to you later,<br/><br/>Kestrel Songs<br/><br/>Sent at: '+here_and_now+'<br/>'+config.songs[song_index];
 		email_options.html = body_text;
 
 		// And a plain-text version
