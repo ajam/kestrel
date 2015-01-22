@@ -90,7 +90,7 @@ function sendEmail(context, mode, most_recent_commit, stdout, repo_name){
 		when = context.when;
 
 		here_and_when = new time.Date(when, config.timezone);
-		if (new Date(here_and_when).toString != 'Invalid Date'){
+		if (new Date(here_and_when).toString() != 'Invalid Date'){
 			here_and_when_str = here_and_when.toString();
 		} else {
 			here_and_when_str = 'ERROR: You have entered an invalid schedule date. Please reschedule using YYYY-MM-DD HH:MM format.'
