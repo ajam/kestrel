@@ -46,7 +46,7 @@ function sendEmail(context, mode, most_recent_commit, stdout, repo_name){
 			committer_name,
 			body_text,
 			now,
-			here_and_now, // A timezone'd version of `now`.
+			here_and_now, // A timezone'd version of `now`
 			msg,
 			commit_messages_and_urls,
 			commit_length_text,
@@ -60,6 +60,9 @@ function sendEmail(context, mode, most_recent_commit, stdout, repo_name){
 			bucket_environment,
 			local_path,
 			remote_path,
+			when,
+			here_and_when, // A timezone'd version of `when`
+			here_and_when_str,
 			when_msg = '',
 			s3_output = '',
 			tense = '',
@@ -85,6 +88,13 @@ function sendEmail(context, mode, most_recent_commit, stdout, repo_name){
 		local_path = context.local_path;
 		remote_path = context.remote_path;
 		when = context.when;
+
+		here_and_when = new time.Date(when, config.timezone);
+		if (new Date(here_and_when).toString != 'Invalid Date'){
+			here_and_when_str = here_and_when.toString();
+		} else {
+			here_and_when_str = 'ERROR: You have entered an invalid schedule date. Please reschedule using YYYY-MM-DD HH:MM format.'
+		}
 
 		committer = most_recent_commit.committer;
 		committer_email = committer.email;
@@ -261,7 +271,7 @@ function prepS3Deploy(deploy_type, info, most_recent_commit){
 			bucket_environment  = commit_parts[0], // Either `prod` or `staging`
 			local_path  = commit_parts[2], // Either `repo_name` or `repo_name/sub-directory`
 	    remote_path = commit_parts[3], // The folder we'll be writing into. An enclosing folder and the repo name plus any sub-directory, e.g. `2014/kestrel-test` or `2014/kestrel-test/output`
-			when = commit_parts[4]; // Date/time string in YYYY-MM-DDTHH:MM format or `now` or `unschedule`
+			when = commit_parts[4]; // Date/time string in YYYY-MM-DD HH:MM format or `now` or `unschedule`
 
 	var deploy_statement = sh_commands.deploy(deploy_type, config.s3.buckets[bucket_environment], local_path, remote_path, config.s3.exclude);
 	// These are the variables packaged up so they can be accessed by `deployToS3`
