@@ -93,9 +93,9 @@ function sendEmail(context, mode, most_recent_commit, stdout, repo_name){
 		if (new Date(here_and_when).toString() != 'Invalid Date'){
 			here_and_when_str = here_and_when.toString();
 		} else {
-			here_and_when_str = 'ERROR: You have entered an invalid schedule date. Please reschedule using YYYY-MM-DD HH:MM format.'
+			here_and_when_str = 'ERROR: You have entered an invalid schedule date of '+when+'. Despite what it says below, I am aborting this request. Please reschedule using YYYY-MM-DD HH:MM format.'
 			console.log('ERROR: Invalid schedule date!'.red, when);
-			console.log('User has been warned via email'.yellow, when);
+			console.log('User has been warned via email'.yellow);
 		}
 
 		committer = most_recent_commit.committer;
@@ -315,8 +315,7 @@ function prepS3Deploy(deploy_type, info, most_recent_commit){
 		sendEmail(context, 'schedule', most_recent_commit);
 		// Print our running job ids and the time they're going to deploy
 		var job_times = Object.keys(jobs).map(function(jobId){
-			console.log(jobs[jobId].context.info)
-			return {id: jobId, time: jobs[jobId].context.info.when };
+			return {id: jobId, time: jobs[jobId].context.when };
 		})
 		console.log('All scheduled jobs: ', job_times);
 	}
