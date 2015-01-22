@@ -94,6 +94,8 @@ function sendEmail(context, mode, most_recent_commit, stdout, repo_name){
 			here_and_when_str = here_and_when.toString();
 		} else {
 			here_and_when_str = 'ERROR: You have entered an invalid schedule date. Please reschedule using YYYY-MM-DD HH:MM format.'
+			console.log('ERROR: Invalid schedule date!'.red, when);
+			console.log('User has been warned via email'.yellow, when);
 		}
 
 		committer = most_recent_commit.committer;
@@ -129,7 +131,7 @@ function sendEmail(context, mode, most_recent_commit, stdout, repo_name){
 				s3_output += stdout.replace(/remaining/g, 'remaining<br/>');
 			}
 		} else if (mode == 'schedule'){
-			when_msg = ' for <strong>' + when + '</strong>';
+			when_msg = ' for <strong>' + here_and_when_str + '</strong>';
 		} else if (mode == 'unschedule'){
 			deploy_type = 'all';
 		}
