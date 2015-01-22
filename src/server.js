@@ -315,6 +315,7 @@ function prepS3Deploy(deploy_type, info, most_recent_commit){
 		sendEmail(context, 'schedule', most_recent_commit);
 		// Print our running job ids and the time they're going to deploy
 		var job_times = Object.keys(jobs).map(function(jobId){
+			console.log(jobs[jobId].context.info)
 			return {id: jobId, time: jobs[jobId].context.info.when };
 		})
 		console.log('All scheduled jobs: ', job_times);
