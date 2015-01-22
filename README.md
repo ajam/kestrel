@@ -3,7 +3,7 @@ Kestrel
 
 A git server that mirrors repositories on a GitHub account at every commit and pushes that repository to a given S3 bucket if the commit message contains a specified trigger string. To be used in conjunction with the command line interface [kestrel-cli](http://github.com/mhkeller/kestrel-cli). Tested on Ubuntu 12.04.
 
-#### Read the [full setup instructions on the wiki](https://github.com/mhkeller/kestrel/wiki/Full-setup) for detailed steps on how to configure the server, clients and the required GitHub settings.
+#### Read the [full setup instructions on the wiki](https://github.com/mhkeller/kestrel/wiki) for detailed steps on how to configure the server, clients and the required GitHub settings.
 
 *The instructions below only cover the server.*
 
