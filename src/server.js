@@ -298,8 +298,14 @@ function prepS3Deploy(deploy_type, info, most_recent_commit){
 			timeZone: config.timezone,
 			context: context
 		});
-		console.log('Scheduling with:\n'.yellow, deploy_statement);
+		console.log('Scheduling with id as :\n'.yellow, cron_id);
+		console.log('And deploy statement as :\n'.yellow, deploy_statement);
 		sendEmail(context, 'schedule', most_recent_commit);
+		// Print our running job ids and the time they're going to deploy
+		var job_times = Object.keys(jobs).map(function(jobId){
+			return {id: jobId, time: jobs[jobId].context.info.when };
+		})
+		console.log('All scheduled jobs: ', job_times);
 	}
 
 }
