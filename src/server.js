@@ -277,7 +277,7 @@ function prepS3Deploy(deploy_type, info, most_recent_commit){
 		when: when
 	};
 
-	var cron_id = repo_name+bucket_environment;
+	var cron_id = repo_name+'_'+bucket_environment;
 
 	// If we're scheduling or unscheduling, (in those cases, `when` is either `unschedule` or a date string)
 	// Clear any previous cron in that namespace
