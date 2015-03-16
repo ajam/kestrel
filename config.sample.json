@@ -30,5 +30,17 @@
 		"clientSecret": "Your Google app clientSecret",
 		"refreshToken": "Your Google app refreshToken"
 	},
-	"timezone": "US/Eastern"
+	"timezone": "US/Eastern",
+	"songs": [
+		"https://www.youtube.com/watch?v=PcmvwFcfWmY",
+		"https://www.youtube.com/watch?v=qTvhKZHAP8U",
+		"https://www.youtube.com/watch?v=JqHliQijgvA",
+		"https://www.youtube.com/watch?v=roPQ_M3yJTA",
+		"https://www.youtube.com/watch?v=GIQn8pab8Vc",
+		"https://www.youtube.com/watch?v=MCWjGMetU0E",
+		"https://www.youtube.com/watch?v=DehK_Y0TUbE",
+		"https://www.youtube.com/watch?v=XHrRxQVUFN4",
+		"https://www.youtube.com/watch?v=3uqGCqMYaHQ",
+		"https://www.youtube.com/watch?v=iC6D2N4nylg"
+	]
 }
