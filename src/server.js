@@ -118,7 +118,7 @@ function sendEmail(context, mode, most_recent_commit, stdout, repo_name){
 		// In schedule mode there is no s3 output so it stays as an empty string
 		if (mode == 'deploy'){
 			s3_output = '<br/><br/><br/>';
-			tune_reason = 'to celebrate!';
+			tune_reason = 'to celebrate';
 			if (!stdout || !stdout.trim()){
 				s3_output += 'S3 said everything was already up-to-date! If you\'ve removed files from your project and want to have that deletion reflected on S3 (possible if you\'ve renamed files, for instance) try doing a hard deploy.';
 			} else {
@@ -126,10 +126,10 @@ function sendEmail(context, mode, most_recent_commit, stdout, repo_name){
 				s3_output += stdout.replace(/remaining/g, 'remaining<br/>');
 			}
 		} else if (mode == 'schedule'){
-			tune_reason = 'while you wait.';
+			tune_reason = 'while you wait';
 			when_msg = ' for <strong>' + when + '</strong>';
 		} else if (mode == 'unschedule'){
-			tune_reason = 'to listen to while you think about what to do next.';
+			tune_reason = 'to listen to while you think about what to do next';
 			deploy_type = 'all';
 		}
 
@@ -148,7 +148,7 @@ function sendEmail(context, mode, most_recent_commit, stdout, repo_name){
 		}
 
 		// Assemble an html version
-		body_text = 'Hi '+ committer_name+',<br/><br/>' + msg + '<br/><br/><br/>'+'Talk to you later,<br/><br/>Kestrel Songs<br/><br/><strong>Sent at</strong>: '+here_and_now+'<br/><br/><strong>Here\'s some tunes '+tune_reason+'</strong>: '+config.songs[song_index];
+		body_text = 'Hi '+ committer_name+',<br/><br/>' + msg + '<br/><br/><br/>'+'Talk to you later,<br/><br/>Kestrel Songs<br/><br/><strong>Sent at</strong>: '+here_and_now+'<br/><strong>Here\'s some tunes '+tune_reason+'</strong>: '+config.songs[song_index];
 		email_options.html = body_text;
 
 		// And a plain-text version
