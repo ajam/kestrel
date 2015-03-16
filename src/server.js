@@ -144,7 +144,7 @@ function sendEmail(context, mode, most_recent_commit, stdout, repo_name){
 		}
 
 		// Assemble an html version
-		body_text = 'Hi '+ committer_name+',<br/><br/>' + msg + '<br/><br/><br/>'+'Talk to you later,<br/><br/>Kestrel Songs<br/><br/><strong>Sent at</strong>: '+here_and_now+'<br/><br/></strong>Here\'s some tunes for you</strong>: '+config.songs[song_index];
+		body_text = 'Hi '+ committer_name+',<br/><br/>' + msg + '<br/><br/><br/>'+'Talk to you later,<br/><br/>Kestrel Songs<br/><br/><strong>Sent at</strong>: '+here_and_now+'<br/><br/><strong>Here\'s some tunes for you</strong>: '+config.songs[song_index];
 		email_options.html = body_text;
 
 		// And a plain-text version
