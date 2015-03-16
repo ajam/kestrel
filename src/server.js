@@ -316,7 +316,7 @@ function prepS3Deploy(deploy_type, info, most_recent_commit){
 	} else {
 
 		date_is_valid = new Date(new time.Date(when, config.timezone));
-		if (date_is_valid == 'Invalid Date'){
+		if (date_is_valid != 'Invalid Date'){
 			jobs[cron_id] = new CronJob({
 				cronTime: new time.Date(when, config.timezone),
 				onTick: deployToS3,
