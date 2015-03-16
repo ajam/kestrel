@@ -95,7 +95,6 @@ function sendEmail(context, mode, most_recent_commit, stdout, repo_name){
 		here_and_when = new time.Date(when, config.timezone);
 		if (new Date(here_and_when).toString() != 'Invalid Date'){
 			here_and_when_str = here_and_when.toString();
-			return false;
 		} else {
 			here_and_when_str = 'ERROR: You have entered an invalid schedule date of '+when+'. Despite what it says below, I am aborting this request. Please reschedule using YYYY-MM-DD HH:MM format.'
 			console.log('ERROR: Invalid schedule date!'.red, when);
@@ -306,6 +305,8 @@ function prepS3Deploy(deploy_type, info, most_recent_commit){
 	if (when != 'now' && jobs[cron_id]){
 		jobs[cron_id].stop();
 	}
+
+	var date_is_valid;
 	
 	if (when == 'now'){
 		deployToS3.call(context);
@@ -313,15 +314,23 @@ function prepS3Deploy(deploy_type, info, most_recent_commit){
 		console.log('Unscheduling all deploys for'.yellow, repo_name);
 		sendEmail(context, 'unschedule', most_recent_commit, '', repo_name);
 	} else {
-		jobs[cron_id] = new CronJob({
-			cronTime: new time.Date(when, config.timezone),
-			onTick: deployToS3,
-			start: true,
-			timeZone: config.timezone,
-			context: context
-		});
-		console.log('Scheduling with id as :\n'.yellow, cron_id);
-		console.log('And deploy statement as :\n'.yellow, deploy_statement);
+
+		date_is_valid = new Date(new time.Date(when, config.timezone));
+		if (date_is_valid != 'Invalid Date'){
+			jobs[cron_id] = new CronJob({
+				cronTime: new time.Date(when, config.timezone),
+				onTick: deployToS3,
+				start: true,
+				timeZone: config.timezone,
+				context: context
+			});
+			console.log('Scheduling with id as :\n'.yellow, cron_id);
+			console.log('And deploy statement as :\n'.yellow, deploy_statement);
+		} else {
+			console.log('Error. Invalid date given:'.red, when, cron_id);
+			console.log('Sending email saying so :\n'.yellow, deploy_statement);
+		}
+
 		sendEmail(context, 'schedule', most_recent_commit);
 		// Print our running job ids and the time they're going to deploy
 		var job_times = Object.keys(jobs).map(function(jobId){
