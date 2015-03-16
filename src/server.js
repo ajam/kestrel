@@ -1,15 +1,17 @@
 'use-strict'
 
-var hookshot = require('hookshot'),
-	fs         = require('fs'),
-	exec       = require('child_process').exec,
-	sh         = require('execSync'),
-	request    = require('request'),
-	colors     = require('colors'),
-	nodemailer = require('nodemailer'),
-	CronJob 	 = require('cron').CronJob,
-	time 			 = require('time');
+var hookshot 			= require('hookshot'),
+		fs         		= require('fs'),
+		child_process = require('child_process'),
+		request    		= require('request'),
+		colors     		= require('colors'),
+		nodemailer 		= require('nodemailer'),
+		CronJob 	 		= require('cron').CronJob,
+		time 			 		= require('time');
 
+var exec       		= child_process.exec,
+		execSync   		= child_process.execSync;
+		
 var config      = require('../config.json'),
 		sh_commands = require('./sh-commands.js'),
 		email_transporter,
@@ -220,7 +222,7 @@ function createDirGitInit(info){
 	var authenticated_remote_url = remote_url_arr[0] + '//' + config.verify_committer.access_token + '@' + remote_url_arr[1];
 	var create_statement = sh_commands.createGitRepoAndRemotes(repo_name, authenticated_remote_url);
 	console.log(create_statement);
-  sh.run(create_statement);
+  execSync(create_statement);
 	console.log('Git created!'.green);
 }
 function pullLatest(info){
@@ -234,21 +236,21 @@ function pullLatest(info){
 
 	// Download latest data
 	var fetch_statement = sh_commands.fetchLatest(repo_name);
-	sh.run(fetch_statement);
+	execSync(fetch_statement);
 
 	// If it's deleted, delete it!
 	if (info.deleted) {
 		delete_branch = sh_commands.deleteBranch(repo_name, branch_name);
-		sh.run(delete_branch);
+		execSync(delete_branch);
 	}
 
 	// Update all branches
 	var track_all_branches = sh_commands.trackAllBranches(repo_name);
-	sh.run(track_all_branches);
+	execSync(track_all_branches);
 
 	// Put the working tree back on to master
 	var checkout_master = sh_commands.checkoutMaster(repo_name);
-	sh.run(checkout_master);
+	execSync(checkout_master);
 }
 function checkForDeployMsg(last_commit){
 	console.log('Checking if deploy message in...'.yellow, last_commit.message);
