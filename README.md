@@ -17,20 +17,20 @@ The Kestrel server requires that you've already set up a webhook from your Githu
 
 ### If you already have Node.js, Python & Pip
 
-````
+````bash
 git clone https://github.com/mhkeller/kestrel
 cd kestrel && sudo npm install
 ````
 
 You also want to install the Amazon Web Services Command-line interface, which is a python package.
 
-````
+````bash
 sudo pip install awscli
 ````
 
 ### If you don't have Node.js, Python & Pip, Git, others...
 
-````
+````bash
 sudo apt-get update
 sudo apt-get install -y python-software-properties python g++ make python-pip
 sudo apt-get install tmux
@@ -48,7 +48,7 @@ sudo apt-get install git-core
 
 All settings are stored in `config.sample.json`. Enter your own values and rename it to `config.json`.
 
-````
+````json
 {
 	"github_listener": {
 		"account_name": "Your GitHub account name",
@@ -103,7 +103,7 @@ The AWS CLI looks for credentials in the file `~/.aws/config`.
 
 Read the [Amazon documentation](http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html) for more details but the bare bones file looks like this:
 
-````
+````txt
 [default]
 aws_access_key_id=AKIAIOSFODNN7EXAMPLE
 aws_secret_access_key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
@@ -111,7 +111,7 @@ aws_secret_access_key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
 
 # Start the server
 
-````
+````bash
 node src/server.js
 ````
 
@@ -123,19 +123,19 @@ If you want to run Kestrel all day long, use the Forever module to run the serve
 
 You'll want to install the module globally:
 
-````
+````bash
 npm install forever -g
 ````
 
 Then start the service:
 
-````
+````bash
 forever start src/server.js
 ````
 
 You'll also want to make sure this server starts up if your machine reboots. You can do this through setting your crontab. To edit your crontab run:
 
-````
+````bash
 crontab -e
 ````
 
@@ -143,13 +143,13 @@ Note: If this is the first time you're running `crontab` it will ask you what ed
 
 Once you've picked an editor, add the following line to your crontab:
 
-````
+````bash
 @reboot /usr/bin/forever start /full/path/to/server.js
 ````
 
 To confirm the task was added, view your crontab with:
 
-````
+````bash
 crontab -l
 ````
 
@@ -165,13 +165,13 @@ http://your-kestrel-server.com:3000/repository-name/commit-or-branch-name/path/t
 
 Install its command-line interface with
 
-````
+````bash
 npm install git-static-diffuse -g
 ````
 
 To test the server, `cd` into `repositories` and run
 
-````
+````bash
 moire start
 ````
 
@@ -183,20 +183,20 @@ You can specify a port other than 3000 by using `--port <replace-with-port-numbe
 
 Starting Forever from within your repositories folder:
 
-````
+````bash
 forever start /usr/bin/moire start
 ````
 
 You'll have to give forever and your crontab the full path to your repositories folder in your crontab:
 
-````
+````bash
 @reboot /usr/bin/forever start /usr/bin/moire start --repositories /home/ubuntu/tasks/kestrel/repositories
 
 ````
 
 ## Put it all together from the root Kestrel folder
 
-````
+````bash
 forever start src/server
 forever start /usr/bin/moire --repositories repositories start
 ````
