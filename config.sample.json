@@ -1,6 +1,6 @@
 {
 	"github_listener": {
-		"account_name": "Your GitHub account name",
+		"account_name": "Your GitHub organization account name",
 		"port": 9001
 	},
 	"s3": {
