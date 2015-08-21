@@ -1,6 +1,6 @@
 {
 	"github_listener": {
-		"account_name": "Your GitHub account name",
+		"account_name": "Your GitHub organization account name",
 		"port": 9001
 	},
 	"s3": {
@@ -41,6 +41,7 @@
 		"https://www.youtube.com/watch?v=DehK_Y0TUbE",
 		"https://www.youtube.com/watch?v=XHrRxQVUFN4",
 		"https://www.youtube.com/watch?v=3uqGCqMYaHQ",
-		"https://www.youtube.com/watch?v=iC6D2N4nylg"
+		"https://www.youtube.com/watch?v=iC6D2N4nylg",
+		"https://www.youtube.com/watch?v=ZThquH5t0ow"
 	]
 }
