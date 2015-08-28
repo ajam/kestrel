@@ -95,7 +95,7 @@ function sendEmail(context, mode, most_recent_commit, stdout, repo_name){
 		here_and_when = new time.Date(when, config.timezone);
 		if (new Date(here_and_when).toString() != 'Invalid Date'){
 			here_and_when_str = here_and_when.toString();
-		} else {
+		} else if (when != 'now'){
 			here_and_when_str = 'ERROR: You have entered an invalid schedule date of '+when+'. Despite what it says below, I am aborting this request. Please reschedule using YYYY-MM-DD HH:MM format.'
 			console.log('ERROR: Invalid schedule date!'.red, when);
 			console.log('User has been warned via email'.yellow);
@@ -229,6 +229,7 @@ function pullLatest(info){
 			delete_branch;
 
 	if (!fs.existsSync('./repositories/' + repo_name)){
+		console.log('Creating project repository ' + repo_name + ' and running `git init`')
 		createDirGitInit(info);
 	}
 
