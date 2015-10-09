@@ -180,7 +180,9 @@ function sendEmail(context, mode, most_recent_commit, stdout, repo_name){
 }
 
 function verifyAccount(incoming_repo){
-	if (incoming_repo == config.github_listener.account_name) return true;
+	if (incoming_repo == config.github_listener.account_name) {
+		return true;
+	}
 	return false;
 }
 function checkIfCommitterIsDeployer(members, committer){
@@ -201,8 +203,9 @@ function verifyCommitter(last_commit, cb){
     		}
     	}, function (error, response, body) {
 		  if (!error) {
-		  	var committer_is_deployer = checkIfCommitterIsDeployer(JSON.parse(body), committer);
-		    cb(committer_is_deployer);
+		  	var json_body = JSON.parse(body)
+		  	var committer_is_deployer = checkIfCommitterIsDeployer(json_body, committer);
+		    cb(committer_is_deployer, json_body, committer);
 		  } else {
 		  	console.log('Error verifying committer'.red, JSON.stringify(error))
 		  }
@@ -365,13 +368,15 @@ hookshot(function(info){
 
 		// Are we deploying? Has that option been enabled and does the commit have the appropriate message?
 		if (config.s3.enabled && deploy_status){
-			verifyCommitter(most_recent_commit, function(committer_approved){
+			verifyCommitter(most_recent_commit, function(committer_approved, publishersList, committer){
 
 				// Does the committer have deploy? privileges?
 				if (committer_approved) {
 					prepS3Deploy(deploy_status, info, most_recent_commit);
 				} else {
 					console.log('Unapproved committer attempted deployment.'.red)
+					console.log('Publisher list:'.red, publishersList)
+					console.log('Publish attempted by:'.red, committer)
 				}
 			
 			});
