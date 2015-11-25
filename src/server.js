@@ -1,6 +1,6 @@
 'use-strict'
 
-var hookshot = require('hookshot');
+var hookshot   = require('hookshot');
 var fs         = require('fs');
 var exec       = require('child_process').exec;
 var sh         = require('execSync');
