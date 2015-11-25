@@ -10,11 +10,14 @@ var nodemailer = require('nodemailer');
 var CronJob 	 = require('cron').CronJob;
 var time 			 = require('time');
 var io 				 = require('indian-ocean');
+var path 			 = require('path')
 
-var config      = require('../config.json'),
-		sh_commands = require('./sh-commands.js'),
-		email_transporter,
-		email_options;
+var config      = require('../config.json');
+var sh_commands = require('./sh-commands.js');
+var email_transporter;
+var email_options;
+
+var REPOSITORIES = path.resolve('.') + 
 
 var xoauth2_generator = require('xoauth2').createXOAuth2Generator({
 	user: config.email.address,
@@ -232,7 +235,7 @@ function pullLatest(info){
 			branch_name = info.ref.split('/')[2], // `ref: "refs/heads/<branchname>` => `branchname`
 			delete_branch;
 
-	if (!io.existsSync('./repositories/' + repo_name)){
+	if ( !io.existsSync(path.join(path.resolve('./'), 'repositories', repo_name)) ) {
 		console.log('Creating project repository ' + repo_name + ' and running `git init`')
 		createDirGitInit(info);
 	}
