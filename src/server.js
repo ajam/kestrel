@@ -5,7 +5,7 @@ var fs         = require('fs');
 var exec       = require('child_process').exec;
 var sh         = require('execSync');
 var request    = require('request');
-var colors     = require('colors');
+var chalk      = require('chalk');
 var nodemailer = require('nodemailer');
 var CronJob 	 = require('cron').CronJob;
 var time 			 = require('time');
@@ -100,9 +100,9 @@ function sendEmail(context, mode, most_recent_commit, stdout, repo_name){
 		if (new Date(here_and_when).toString() != 'Invalid Date'){
 			here_and_when_str = here_and_when.toString();
 		} else if (when != 'now'){
-			here_and_when_str = 'ERROR: You have entered an invalid schedule date of '+when+'. Despite what it says below, I am aborting this request. Please reschedule using YYYY-MM-DD HH:MM format.'
-			console.log('ERROR: Invalid schedule date!'.red, when);
-			console.log('User has been warned via email'.yellow);
+			here_and_when_str = 'ERROR: You have entered an invalid schedule date of ' + when + '. Despite what it says below, I am aborting this request. Please reschedule using YYYY-MM-DD HH:MM format.'
+			console.log(chalk.red('ERROR: Invalid schedule date!'), when);
+			console.log(chalk.yellow('User has been warned via email'));
 		}
 
 		committer = most_recent_commit.committer;
@@ -175,9 +175,9 @@ function sendEmail(context, mode, most_recent_commit, stdout, repo_name){
 		email_options.to = committer_email;
 		email_transporter.sendMail(email_options, function(error, info){
 			if(error){
-				console.log('Error in email sending'.red, error);
+				console.log(chalk.red('Error in email sending'), error);
 			}else{
-				console.log('Email success! To: '.green + committer_name + ' <' + committer_email + '>');
+				console.log(chalk.green('Email success! To: ') + committer_name + ' <' + committer_email + '>');
 			}
 		});
 	}
@@ -211,14 +211,14 @@ function verifyCommitter(last_commit, cb){
 		  	var committer_is_deployer = checkIfCommitterIsDeployer(json_body, committer);
 		    cb(committer_is_deployer, json_body, committer);
 		  } else {
-		  	console.log('Error verifying committer'.red, JSON.stringify(error))
+		  	console.log(chalk.red('Error verifying committer'), JSON.stringify(error))
 		  }
 		})
 	}
 }
 
 function createDirGitInit(info){
-	console.log('Creating folder and git repository...'.yellow);
+	console.log(chalk.yellow('Creating folder and git repository...'));
 	var repo_name = info.repository.name;
 
 	fs.mkdirSync(path.join(REPOSITORIES, repo_name));
@@ -228,7 +228,7 @@ function createDirGitInit(info){
 	var create_statement = sh_commands.createGitRepoAndRemotes(repo_name, authenticated_remote_url);
 	console.log(create_statement);
   sh.run(create_statement);
-	console.log('Git created!'.green);
+	console.log(chalk.green('Git created!'));
 }
 function pullLatest(info){
 	var repo_name = info.repository.name,
@@ -259,7 +259,7 @@ function pullLatest(info){
 	sh.run(checkout_master);
 }
 function checkForDeployMsg(last_commit){
-	console.log('Checking if deploy message in...'.yellow, last_commit.message);
+	console.log(chalk.yellow('Checking if deploy message in...'), last_commit.message);
 	var commit_trigger = last_commit.message.split('::')[1], // 'bucket_environment::trigger::local_path::remote_path::when' -> "trigger"
 	    cp_deploy_regx   = new RegExp(config.s3.hard_deploy.trigger),
 	    sync_deploy_regx = new RegExp(config.s3.sync_deploy_trigger);
@@ -274,10 +274,10 @@ function deployToS3(){
 	var deploy_statement = this.deploy_statement,
 			most_recent_commit = this.most_recent_commit;
 
-	console.log('Deploying with:\n'.yellow, deploy_statement);
+	console.log(chalk.('Deploying with:\n'), deploy_statement);
 	exec(deploy_statement, function(error, stdout){
 		// Log deployment result
-		console.log('Deployed!'.green);
+		console.log(chalk.green('Deployed!'));
 		console.log(stdout);
 		sendEmail(that, 'deploy', most_recent_commit, stdout);
 	});
@@ -319,7 +319,7 @@ function prepS3Deploy(deploy_type, info, most_recent_commit){
 	if (when == 'now'){
 		deployToS3.call(context);
 	} else if (when == 'unschedule'){
-		console.log('Unscheduling all deploys for'.yellow, repo_name);
+		console.log(chalk.yellow('Unscheduling all deploys for'), repo_name);
 		sendEmail(context, 'unschedule', most_recent_commit, '', repo_name);
 	} else {
 
@@ -332,11 +332,11 @@ function prepS3Deploy(deploy_type, info, most_recent_commit){
 				timeZone: config.timezone,
 				context: context
 			});
-			console.log('Scheduling with id as :\n'.yellow, cron_id);
-			console.log('And deploy statement as :\n'.yellow, deploy_statement);
+			console.log(chalk.yellow('Scheduling with id as :\n'), cron_id);
+			console.log(chalk.yellow('And deploy statement as :\n'), deploy_statement);
 		} else {
-			console.log('Error. Invalid date given:'.red, when, cron_id);
-			console.log('Sending email saying so :\n'.yellow, deploy_statement);
+			console.log(chalk.red('Error. Invalid date given:'), when, cron_id);
+			console.log(chalk.yellow('Sending email saying so :\n'), deploy_statement);
 		}
 
 		sendEmail(context, 'schedule', most_recent_commit);
@@ -350,7 +350,7 @@ function prepS3Deploy(deploy_type, info, most_recent_commit){
 }
 
 hookshot(function(info){
-	console.log('\n\n\n\n## Incoming push from'.cyan, info.repository.owner.name);
+	console.log(chalk.cyan('\n\n\n\n## Incoming push from'), info.repository.owner.name);
 	// Is this request coming from the specified GitHub Account?
 	var is_account_verified = verifyAccount(info.repository.owner.name);
 	// Is there a deploy message present?
@@ -361,7 +361,7 @@ hookshot(function(info){
 	if (info.commits.length) {
 		most_recent_commit  = info.commits[info.commits.length - 1];
 		deploy_status       = checkForDeployMsg(most_recent_commit);
-		console.log('Deploy status is'.cyan, deploy_status);
+		console.log(chalk.cyan('Deploy status is'), deploy_status);
 	}
 	// Is this coming from the whitelisted GitHub account?
 	if (is_account_verified){
@@ -378,9 +378,9 @@ hookshot(function(info){
 				if (committer_approved) {
 					prepS3Deploy(deploy_status, info, most_recent_commit);
 				} else {
-					console.log('Unapproved committer attempted deployment.'.red)
-					console.log('Publisher list:'.red, publishersList)
-					console.log('Publish attempted by:'.red, committer)
+					console.log(chalk.red('Unapproved committer attempted deployment.'))
+					console.log(chalk.red('Publisher list:'), publishersList)
+					console.log(chalk.red('Publish attempted by:'), committer)
 				}
 			
 			});

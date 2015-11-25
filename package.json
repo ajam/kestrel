@@ -13,7 +13,7 @@
   "author": "Michael Keller",
   "license": "MIT",
   "dependencies": {
-    "colors": "~0.6.2",
+    "chalk": "^1.1.1",
     "cron": "1.0.5",
     "execSync": "^1.0.1-pre",
     "hookshot": "mhkeller/hookshot#ff5d88c1eb53896744c0bc6f91dcb84ac93d200d",
