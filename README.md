@@ -67,6 +67,7 @@ All settings are stored in `config.sample.json`. Enter your own values and renam
 			"trigger": "String to trigger an overwrite of S3 files"
 		}
 	},
+	"removeOnPush": true,
 	"archive": {
 		"enabled": false,
 		"account_name": "Your GitHub or bitbucket account name",
@@ -92,6 +93,7 @@ All settings are stored in `config.sample.json`. Enter your own values and renam
 | `s3.hard_deploy.enabled` | `false` | Enable the option that a string in your commit message will copy all files in your repo onto S3, not just the modified files and overwrite existing files. The `hard_deploy.trigger` regex will run first so if your hard deploy trigger is `deploy-hard` and your sync trigger is `deploy`, it will properly deploy hard. But it's probably best to make these two completely distinct strings to avoid confusion.|
 | `s3.hard_deploy.trigger` | none | The string to trigger a hard deploy.|
 | `s3.exclude_from_sync` | `[".git/*", ".*"]` | An array of file or folder names to not transfer to S3. By default it doesn't transfer the Git folder or any hidden files. |
+| `removeOnPush` | `true` | Delete the repository on push. This can help avoid any merge conflicts if force pushes were used. The downside is the increased time it will take to delete and download the repository. |
 | `archive.enabled` | `false` | If you enable archives, the server will automatically push your repo to another GitHub or Bitbucket account. Set this to `true` to enable. |
 | `archive.account_name` | none | The account name to archive this repo under. |
 | `archive.type` | none | Can be either `bitbucket` or `github`. |

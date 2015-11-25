@@ -231,12 +231,16 @@ function createDirGitInit(info){
 	console.log(chalk.green('Git created!'));
 }
 function pullLatest(info){
-	var repo_name = info.repository.name,
-			branch_name = info.ref.split('/')[2], // `ref: "refs/heads/<branchname>` => `branchname`
-			delete_branch;
+	var repo_name = info.repository.name;
+	var branch_name = info.ref.split('/')[2]; // `ref: "refs/heads/<branchname>` => `branchname`
+	var delete_branch;
 
+	// If we're in `removeOnPush` mode, delete the repo folder first
+	if (config.removeOnPush) {
+		sh.run(sh_commands.rmRf(repo_name))
+	}
 	if ( !io.existsSync(path.join(REPOSITORIES, repo_name)) ) {
-		console.log('Creating project repository ' + repo_name + ' and running `git init`')
+		console.log('Creating project repository ' + chalk.bold(repo_name) + ' and running ' + chalk.bold('git init'))
 		createDirGitInit(info);
 	}
 
@@ -274,7 +278,7 @@ function deployToS3(){
 	var deploy_statement = this.deploy_statement,
 			most_recent_commit = this.most_recent_commit;
 
-	console.log(chalk.('Deploying with:\n'), deploy_statement);
+	console.log(chalk.yellow('Deploying with:\n'), deploy_statement);
 	exec(deploy_statement, function(error, stdout){
 		// Log deployment result
 		console.log(chalk.green('Deployed!'));
