@@ -6,7 +6,7 @@
 	"s3": {
 		"enabled": false,
 		"buckets": {
-			"prod": "Your production  S3 bucket name",
+			"prod": "Your production S3 bucket name",
 			"staging": "Your staging S3 bucket name"
 		},
 		"sync_deploy_trigger": "String to trigger a sync to s3",
