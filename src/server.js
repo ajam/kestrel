@@ -10,14 +10,14 @@ var nodemailer = require('nodemailer');
 var CronJob 	 = require('cron').CronJob;
 var time 			 = require('time');
 var io 				 = require('indian-ocean');
-var path 			 = require('path')
+var path 			 = require('path');
 
 var config      = require('../config.json');
 var sh_commands = require('./sh-commands.js');
 var email_transporter;
 var email_options;
 
-var REPOSITORIES = path.resolve('.') + 
+var REPOSITORIES = path.join(path.resolve('.'), 'repositories')
 
 var xoauth2_generator = require('xoauth2').createXOAuth2Generator({
 	user: config.email.address,
@@ -221,7 +221,7 @@ function createDirGitInit(info){
 	console.log('Creating folder and git repository...'.yellow);
 	var repo_name = info.repository.name;
 
-	fs.mkdirSync('./repositories/' + repo_name);
+	fs.mkdirSync(path.join(REPOSITORIES, repo_name));
 
 	var remote_url_arr = info.repository.url.split('//');
 	var authenticated_remote_url = remote_url_arr[0] + '//' + config.verify_committer.access_token + '@' + remote_url_arr[1];
@@ -235,7 +235,7 @@ function pullLatest(info){
 			branch_name = info.ref.split('/')[2], // `ref: "refs/heads/<branchname>` => `branchname`
 			delete_branch;
 
-	if ( !io.existsSync(path.join(path.resolve('./'), 'repositories', repo_name)) ) {
+	if ( !io.existsSync(path.join(REPOSITORIES, repo_name)) ) {
 		console.log('Creating project repository ' + repo_name + ' and running `git init`')
 		createDirGitInit(info);
 	}
