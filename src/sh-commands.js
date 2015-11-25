@@ -17,8 +17,8 @@ var sh_commands = {
 	trackAllBranches: function(repo_name) {
 		return 'cd ' + path.join('repositories', repo_name) + ' && for remote in $(git branch -r) ; do git checkout $(echo $remote | cut -d \'/\' -f2) && git pull origin $(echo $remote | cut -d \'/\' -f2); done';
 	},
-	checkoutMaster: function(repo_name) {
-		return 'cd ' + path.join('repositories', repo_name) + ' && git checkout master && git pull origin master'; // Pull master here just in case the above failed doing trackAllBranches
+	checkoutBranch: function(repo_name, branch_name) {
+		return 'cd ' + path.join('repositories', repo_name) + ' && git checkout ' + branch_name + ' && git pull origin ' + branch_name; // Pull this branch here just in case the above failed doing trackAllBranches
 	},
 	deleteBranch: function(repo_name, branch_name) {
 		return 'cd ' + path.join('repositories', repo_name) + ' && git branch -D ' + branch_name;

@@ -258,9 +258,9 @@ function pullLatest(info){
 	var track_all_branches = sh_commands.trackAllBranches(repo_name);
 	sh.run(track_all_branches);
 
-	// Put the working tree back on to master
-	var checkout_master = sh_commands.checkoutMaster(repo_name);
-	sh.run(checkout_master);
+	// Put the working tree back onto the desired branch
+	var checkout_branch = sh_commands.checkoutBranch(repo_name, branch_name);
+	sh.run(checkout_branch);
 }
 function checkForDeployMsg(last_commit){
 	console.log(chalk.yellow('Checking if deploy message in...'), last_commit.message);
