@@ -1,14 +1,15 @@
 'use-strict'
 
-var hookshot = require('hookshot'),
-	fs         = require('fs'),
-	exec       = require('child_process').exec,
-	sh         = require('execSync'),
-	request    = require('request'),
-	colors     = require('colors'),
-	nodemailer = require('nodemailer'),
-	CronJob 	 = require('cron').CronJob,
-	time 			 = require('time');
+var hookshot = require('hookshot');
+var fs         = require('fs');
+var exec       = require('child_process').exec;
+var sh         = require('execSync');
+var request    = require('request');
+var colors     = require('colors');
+var nodemailer = require('nodemailer');
+var CronJob 	 = require('cron').CronJob;
+var time 			 = require('time');
+var io 				 = require('indian-ocean');
 
 var config      = require('../config.json'),
 		sh_commands = require('./sh-commands.js'),
@@ -231,7 +232,7 @@ function pullLatest(info){
 			branch_name = info.ref.split('/')[2], // `ref: "refs/heads/<branchname>` => `branchname`
 			delete_branch;
 
-	if (!fs.existsSync('./repositories/' + repo_name)){
+	if (!io.existsSync('./repositories/' + repo_name)){
 		console.log('Creating project repository ' + repo_name + ' and running `git init`')
 		createDirGitInit(info);
 	}
