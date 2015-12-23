@@ -164,7 +164,7 @@ function sendEmail(context, mode, most_recent_commit, stdout, repo_name){
 		}
 
 		// Add the list of jobs
-		msg += '<br/><br/>Scheduled jobs</br>' + getJobsStr('<br/>')
+		msg += '<br/><br/>Scheduled jobs:</br>' + getJobsStr('<br/>')
 
 		// Assemble an html version
 		body_text = 'Hi '+ committer_name+',<br/><br/>' + msg + '<br/><br/><br/>'+'Talk to you later,<br/><br/>Kestrel Songs<br/><br/><strong>Sent at</strong>: '+here_and_now+'<br/><strong>Here\'s some tunes '+tune_reason+'</strong>: '+config.songs[song_index];
@@ -197,7 +197,7 @@ function getJobs(includeContext){
 }
 
 function getJobsStr(delimiter){
-	var clean = getJobs().map(function(job){
+	return getJobs().map(function(job){
 		return job.id + ': ' + job.time
 	}).join(delimiter)
 }
