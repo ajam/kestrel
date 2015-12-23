@@ -360,10 +360,7 @@ function prepS3Deploy(deploy_type, info, most_recent_commit){
 		console.log(chalk.yellow('Unscheduling all deploys for'), repo_name);
 		sendEmail(context, 'unschedule', most_recent_commit, '', repo_name);
 		// Remove from file
-		var clean_jobs = getCleanJobs()
-		delete clean_jobs[cron_id]
-		// Clear from job object
-		delete jobs[cron_id]
+		removeCron(cron_id)
 	} else {
 
 		date_is_valid = new Date(new time.Date(when, config.timezone));
@@ -385,7 +382,7 @@ function prepS3Deploy(deploy_type, info, most_recent_commit){
 
 		sendEmail(context, 'schedule', most_recent_commit);
 		// Print our running job ids and the time they're going to deploy
-		console.log('All scheduled jobs: ', getCleanJobs())
+		console.log('All scheduled jobs: ', getJobs())
 	}
 
 }
