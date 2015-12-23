@@ -26,7 +26,7 @@ var xoauth2_generator = require('xoauth2').createXOAuth2Generator({
 	refreshToken: config.email.refreshToken
 });
 
-// Where we're storing our cronjobs by repo name
+// Where we're storing our cronjobs by environment and repo name
 var jobs = {};
 
 if (config.email.enabled){
@@ -163,6 +163,9 @@ function sendEmail(context, mode, most_recent_commit, stdout, repo_name){
 								.replace('<strong>all</strong>', 'all');
 		}
 
+		// Add the list of jobs
+		msg += '<br/><br/>Scheduled jobs</br>' + getJobsStr('<br/>')
+
 		// Assemble an html version
 		body_text = 'Hi '+ committer_name+',<br/><br/>' + msg + '<br/><br/><br/>'+'Talk to you later,<br/><br/>Kestrel Songs<br/><br/><strong>Sent at</strong>: '+here_and_now+'<br/><strong>Here\'s some tunes '+tune_reason+'</strong>: '+config.songs[song_index];
 		email_options.html = body_text;
@@ -181,6 +184,19 @@ function sendEmail(context, mode, most_recent_commit, stdout, repo_name){
 			}
 		});
 	}
+}
+
+function getCleanJobs(){
+	return Object.keys(jobs).map(function(jobId){
+			return {id: jobId, time: jobs[jobId].context.when };
+		})
+}
+
+function getJobsStr(delimiter){
+	var clean = getCleanJobs().map(function(job){
+		return job.id + ': ' + job.time
+	}).join(delimiter)
+
 }
 
 function verifyAccount(incoming_repo){
@@ -310,7 +326,7 @@ function prepS3Deploy(deploy_type, info, most_recent_commit){
 		when: when
 	};
 
-	var cron_id = repo_name+'_'+bucket_environment;
+	var cron_id = bucket_environment + '_' + repo_name;
 
 	// If we're scheduling or unscheduling, (in those cases, `when` is either `unschedule` or a date string)
 	// Clear any previous cron in that namespace
@@ -345,10 +361,7 @@ function prepS3Deploy(deploy_type, info, most_recent_commit){
 
 		sendEmail(context, 'schedule', most_recent_commit);
 		// Print our running job ids and the time they're going to deploy
-		var job_times = Object.keys(jobs).map(function(jobId){
-			return {id: jobId, time: jobs[jobId].context.when };
-		})
-		console.log('All scheduled jobs: ', job_times);
+		console.log('All scheduled jobs: ', getCleanJobs();
 	}
 
 }
