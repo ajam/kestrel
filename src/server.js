@@ -209,8 +209,8 @@ function removeCron(cronId){
 }
 
 function writeCron(){
-	var all_jobs_in_memory = getJobs(true)
-	io.writeDataSync('scheduled-jobs.json', all_jobs_in_memory);
+	io.writeDataSync('scheduled-jobs.json', getJobs(true));
+	io.fs.writeFileSync('scheduled-jobs-clean.json', JSON.parse(getJobs(), null, 2));
 }
 
 function verifyAccount(incoming_repo){
