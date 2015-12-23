@@ -269,6 +269,8 @@ function pullLatest(info){
 	if (config.removeOnPush) {
 		sh.run(sh_commands.rmRf(repo_name))
 	}
+	console.log(path.join(REPOSITORIES, repo_name))
+	console.log(io.existsSync(path.join(REPOSITORIES, repo_name)) )
 	if ( !io.existsSync(path.join(REPOSITORIES, repo_name)) ) {
 		console.log('Creating project repository ' + chalk.bold(repo_name) + ' and running ' + chalk.bold('git init'))
 		createDirGitInit(info);

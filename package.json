@@ -4,7 +4,7 @@
   "description": "A hook to listen to GitHub and swoop files off to S3. Cli: http://github.com/mhkeller/kestrel-cli",
   "main": "src/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "FORCE_COLOR=true forever start src/server.js"
   },
   "repository": {
     "type": "git",
