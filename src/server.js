@@ -3,7 +3,7 @@
 var hookshot   = require('hookshot');
 var fs         = require('fs');
 var exec       = require('child_process').exec;
-var sh         = require('execSync');
+var sh         = require('execSync'); // If you ever upgrade to a later version of nodejs, replace this with the base node `execSync` function
 var request    = require('request');
 var chalk      = require('chalk');
 var nodemailer = require('nodemailer');
@@ -186,17 +186,31 @@ function sendEmail(context, mode, most_recent_commit, stdout, repo_name){
 	}
 }
 
-function getCleanJobs(){
+function getJobs(includeContext){
 	return Object.keys(jobs).map(function(jobId){
-			return {id: jobId, time: jobs[jobId].context.when };
+			var info = {id: jobId, time: jobs[jobId].context.when };
+			if (includeContext) {
+				info.context = jobs[jobId].context
+			}
+			return info
 		})
 }
 
 function getJobsStr(delimiter){
-	var clean = getCleanJobs().map(function(job){
+	var clean = getJobs().map(function(job){
 		return job.id + ': ' + job.time
 	}).join(delimiter)
+}
 
+function removeCron(cronId){
+	delete jobs[cronId]
+	writeCron()
+	console.log(chalk.green('Removed cron id from list of jobs after deploying:'), cronId)
+}
+
+function writeCron(){
+	var all_jobs_in_memory = getJobs(true)
+	io.writeDataSync('scheduled-jobs.json', all_jobs_in_memory);
 }
 
 function verifyAccount(incoming_repo){
@@ -299,10 +313,11 @@ function deployToS3(){
 		// Log deployment result
 		console.log(chalk.green('Deployed!'));
 		console.log(stdout);
+		removeCron(this.cron_id)
 		sendEmail(that, 'deploy', most_recent_commit, stdout);
 	});
-	
 }
+
 function prepS3Deploy(deploy_type, info, most_recent_commit){
 	var repo_name   = info.repository.name,
 			last_commit_msg = most_recent_commit.message,
@@ -313,6 +328,8 @@ function prepS3Deploy(deploy_type, info, most_recent_commit){
 			when = commit_parts[4]; // Date/time string in YYYY-MM-DD HH:MM format or `now` or `unschedule`
 
 	var deploy_statement = sh_commands.deploy(deploy_type, config.s3.buckets[bucket_environment], local_path, remote_path, config.s3.exclude);
+	
+	var cron_id = bucket_environment + '_' + repo_name;
 	// These are the variables packaged up so they can be accessed by `deployToS3`
 	// We can't really pass them super easily since `CronJob` wants a function by reference
 	var context = {
@@ -323,10 +340,9 @@ function prepS3Deploy(deploy_type, info, most_recent_commit){
 		local_path: local_path,
 		remote_path: remote_path,
 		deploy_statement: deploy_statement,
-		when: when
+		when: when,
+		cron_id: cron_id
 	};
-
-	var cron_id = bucket_environment + '_' + repo_name;
 
 	// If we're scheduling or unscheduling, (in those cases, `when` is either `unschedule` or a date string)
 	// Clear any previous cron in that namespace
@@ -341,6 +357,11 @@ function prepS3Deploy(deploy_type, info, most_recent_commit){
 	} else if (when == 'unschedule'){
 		console.log(chalk.yellow('Unscheduling all deploys for'), repo_name);
 		sendEmail(context, 'unschedule', most_recent_commit, '', repo_name);
+		// Remove from file
+		var clean_jobs = getCleanJobs()
+		delete clean_jobs[cron_id]
+		// Clear from job object
+		delete jobs[cron_id]
 	} else {
 
 		date_is_valid = new Date(new time.Date(when, config.timezone));
@@ -352,6 +373,7 @@ function prepS3Deploy(deploy_type, info, most_recent_commit){
 				timeZone: config.timezone,
 				context: context
 			});
+			writeCron()
 			console.log(chalk.yellow('Scheduling with id as :\n'), cron_id);
 			console.log(chalk.yellow('And deploy statement as :\n'), deploy_statement);
 		} else {
@@ -361,7 +383,7 @@ function prepS3Deploy(deploy_type, info, most_recent_commit){
 
 		sendEmail(context, 'schedule', most_recent_commit);
 		// Print our running job ids and the time they're going to deploy
-		console.log('All scheduled jobs: ', getCleanJobs();
+		console.log('All scheduled jobs: ', getCleanJobs())
 	}
 
 }
