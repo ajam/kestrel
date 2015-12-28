@@ -34,16 +34,17 @@ if (fs.existsSync('scheduled-jobs.json')){
 	var scheduled_jobs = io.readDataSync('scheduled-jobs.json')
 
 	// Schedule jobs on start
-	Object.keys(scheduled_jobs).forEach(function(cronId){
-		var cron_info = scheduled_jobs[cronId]
-		jobs[cronId] = new CronJob({
-			cronTime: new time.Date(cron_info.when, config.timezone),
+	scheduled_jobs.forEach(function(job){
+		jobs[job.id] = new CronJob({
+			cronTime: new time.Date(job.when, config.timezone),
 			onTick: deployToS3,
 			start: true,
 			timeZone: config.timezone,
-			context: cron_info.context
+			context: job.context
 		});
 	})
+
+	writeCron()
 }
 
 if (config.email.enabled){
@@ -182,7 +183,7 @@ function sendEmail(context, mode, most_recent_commit, stdout, repo_name){
 
 		// Add the list of jobs
 		if (!_.isEmpty(jobs)){
-			msg += '<br/><br/>Scheduled jobs:<br/>' + getJobsStr('<br/>')
+			msg += '<br/><br/><u>Scheduled jobs:</u><br/>' + getJobsStr('<br/>')
 		}
 
 		// Assemble an html version
