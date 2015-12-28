@@ -26,8 +26,24 @@ var xoauth2_generator = require('xoauth2').createXOAuth2Generator({
 	refreshToken: config.email.refreshToken
 });
 
-// Where we're storing our cronjobs by environment and repo name
+// Where we're storing our cronjobs by environment and repo name and path
 var jobs = {};
+
+if (fs.existsSync('scheduled-jobs.json')){
+	var scheduled_jobs = io.readDataSync('scheduled-jobs.json')
+
+	// Schedule jobs on start
+	Object.keys(scheduled_jobs).forEach(function(cronId){
+		var cron_info = scheduled_jobs[cronId]
+		jobs[cronId] = new CronJob({
+			cronTime: new time.Date(cron_info.when, config.timezone),
+			onTick: deployToS3,
+			start: true,
+			timeZone: config.timezone,
+			context: cron_info.context
+		});
+	})
+}
 
 if (config.email.enabled){
 	// Create reusable transporter object using SMTP transport
@@ -188,7 +204,10 @@ function sendEmail(context, mode, most_recent_commit, stdout, repo_name){
 
 function getJobs(includeContext){
 	return Object.keys(jobs).map(function(jobId){
-			var info = {id: jobId, time: jobs[jobId].context.when };
+			var info = {
+				id: jobId, 
+				when: jobs[jobId].context.when 
+			};
 			if (includeContext) {
 				info.context = jobs[jobId].context
 			}
@@ -198,7 +217,7 @@ function getJobs(includeContext){
 
 function getJobsStr(delimiter){
 	return getJobs().map(function(job){
-		return job.id + ': ' + job.time
+		return job.id + ': ' + new time.Date(job.when, config.timezone)
 	}).join(delimiter)
 }
 
@@ -269,8 +288,6 @@ function pullLatest(info){
 	if (config.removeOnPush) {
 		sh.run(sh_commands.rmRf(repo_name))
 	}
-	console.log(path.join(REPOSITORIES, repo_name))
-	console.log(io.existsSync(path.join(REPOSITORIES, repo_name)) )
 	if ( !fs.existsSync(path.join(REPOSITORIES, repo_name)) ) {
 		console.log('Creating project repository ' + chalk.bold(repo_name) + ' and running ' + chalk.bold('git init'))
 		createDirGitInit(info);
@@ -331,7 +348,7 @@ function prepS3Deploy(deploy_type, info, most_recent_commit){
 
 	var deploy_statement = sh_commands.deploy(deploy_type, config.s3.buckets[bucket_environment], local_path, remote_path, config.s3.exclude);
 	
-	var cron_id = bucket_environment + '_' + repo_name;
+	var cron_id = bucket_environment + '_' + repo_name + '_' + local_path;
 	// These are the variables packaged up so they can be accessed by `deployToS3`
 	// We can't really pass them super easily since `CronJob` wants a function by reference
 	var context = {
