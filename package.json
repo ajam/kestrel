@@ -5,7 +5,8 @@
   "main": "src/server.js",
   "scripts": {
     "start": "FORCE_COLOR=true forever start src/server.js",
-    "restart": "FORCE_COLOR=true forever restart src/server.js"
+    "restart": "FORCE_COLOR=true forever restart src/server.js",
+    "logs": "FORCE_COLOR=true forever logs src/server.js"
   },
   "repository": {
     "type": "git",
