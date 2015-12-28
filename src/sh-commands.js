@@ -24,8 +24,7 @@ var sh_commands = {
 		return 'cd ' + path.join('repositories', repo_name) + ' && git branch -D ' + branch_name;
 	},
 	deploy: function(mode, bucket_name, local_path, remote_path, exclusions) {
-		var separater = path.sep;
-		return 'cd repositories && aws s3 sync ' + local_path.split('>>').join(separater) + ' s3://' + bucket_name + '/' + remote_path + '/ --acl public-read ' + ((mode == 'hard') ? '--delete' : '') + ' ' + helpers.excludeFiles(exclusions)
+		return 'cd repositories && aws s3 sync ' + local_path + ' s3://' + bucket_name + '/' + remote_path + '/ --acl public-read ' + ((mode == 'hard') ? '--delete' : '') + ' ' + helpers.excludeFiles(exclusions)
 	},
 	rmRf: function(repo_name) {
 		return 'rm -rf ' +  path.join('repositories', repo_name);
