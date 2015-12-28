@@ -1,6 +1,6 @@
 {
   "name": "kestrel-server",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "A hook to listen to GitHub and swoop files off to S3. Cli: http://github.com/ajam/kestrel-cli",
   "main": "src/server.js",
   "scripts": {
