@@ -11,6 +11,7 @@ var CronJob 	 = require('cron').CronJob;
 var time 			 = require('time');
 var io 				 = require('indian-ocean');
 var path 			 = require('path');
+var _          = require('underscore');
 
 var config      = require('../config.json');
 var sh_commands = require('./sh-commands.js');
@@ -180,7 +181,9 @@ function sendEmail(context, mode, most_recent_commit, stdout, repo_name){
 		}
 
 		// Add the list of jobs
-		msg += '<br/><br/>Scheduled jobs:</br>' + getJobsStr('<br/>')
+		if (!_.isEmpty(jobs)){
+			msg += '<br/><br/>Scheduled jobs:<br/>' + getJobsStr('<br/>')
+		}
 
 		// Assemble an html version
 		body_text = 'Hi '+ committer_name+',<br/><br/>' + msg + '<br/><br/><br/>'+'Talk to you later,<br/><br/>Kestrel Songs<br/><br/><strong>Sent at</strong>: '+here_and_now+'<br/><strong>Here\'s some tunes '+tune_reason+'</strong>: '+config.songs[song_index];
@@ -332,7 +335,7 @@ function deployToS3(){
 		// Log deployment result
 		console.log(chalk.green('Deployed!'));
 		console.log(stdout);
-		removeCron(this.cron_id)
+		removeCron(that.cron_id)
 		sendEmail(that, 'deploy', most_recent_commit, stdout);
 	});
 }
